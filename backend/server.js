@@ -41,6 +41,9 @@ app.use(session({
 const languageRoutes = require('./routes/language');
 app.use('/api/language', languageRoutes);
 
+const colorsRoutes = require('./routes/colors');
+app.use('/api/colors', colorsRoutes);
+
 app.get('/api/health', async (req, res) => {
   try {
     await db.query('SELECT 1');
