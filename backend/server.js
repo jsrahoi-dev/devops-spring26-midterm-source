@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const db = require('./db/connection');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
@@ -60,6 +61,14 @@ app.get('/api/health', async (req, res) => {
   } catch (error) {
     res.status(500).json({ status: 'error', db: 'disconnected', error: error.message });
   }
+});
+
+// Serve static files from React build
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Handle React routing - send all other requests to index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(PORT, () => {
