@@ -44,6 +44,15 @@ app.use('/api/language', languageRoutes);
 const colorsRoutes = require('./routes/colors');
 app.use('/api/colors', colorsRoutes);
 
+const responsesRoutes = require('./routes/responses');
+app.use('/api/responses', responsesRoutes);
+
+const resultsRoutes = require('./routes/results');
+app.use('/api/results', resultsRoutes);
+
+const visualizeRoutes = require('./routes/visualize');
+app.use('/api/visualize', visualizeRoutes);
+
 app.get('/api/health', async (req, res) => {
   try {
     await db.query('SELECT 1');
