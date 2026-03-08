@@ -37,6 +37,7 @@ export default function ColorClassifier() {
         rgb_r: color.rgb_r,
         rgb_g: color.rgb_g,
         rgb_b: color.rgb_b,
+        hex: color.hex,
         classification
       })
 
