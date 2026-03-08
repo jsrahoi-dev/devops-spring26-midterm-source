@@ -39,7 +39,7 @@ export default function StatsView() {
     }
   }, [])
 
-  if (loading) {
+  if (loading || !personalStats || !globalStats) {
     return <div className="stats-view loading">Loading stats...</div>
   }
 
