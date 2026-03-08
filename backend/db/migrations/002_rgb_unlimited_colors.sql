@@ -31,11 +31,18 @@ WHERE rgb_r_new IS NULL OR rgb_g_new IS NULL OR rgb_b_new IS NULL OR hex_new IS 
 -- Enforce validation - fail migration if NULL values found
 SET @null_count = (SELECT COUNT(*) FROM responses WHERE rgb_r_new IS NULL OR rgb_g_new IS NULL OR rgb_b_new IS NULL OR hex_new IS NULL);
 
--- Signal error if validation fails
-SET @validation_check = IF(@null_count > 0,
-  (SELECT SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Backfill validation failed: NULL values found'),
-  0
-);
+-- Enforce validation - fail migration if NULL values found
+DELIMITER $$
+CREATE PROCEDURE check_validation()
+BEGIN
+  IF @null_count > 0 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Backfill validation failed: NULL values found';
+  END IF;
+END$$
+DELIMITER ;
+
+CALL check_validation();
+DROP PROCEDURE check_validation;
 
 -- Step 4: Make columns NOT NULL (now that backfill is complete)
 ALTER TABLE responses
@@ -70,10 +77,17 @@ SET @fk_name = (
 );
 
 -- Verify FK constraint was found
-SET @fk_check = IF(@fk_name IS NULL,
-  (SELECT SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'FK constraint not found on responses.color_id'),
-  0
-);
+DELIMITER $$
+CREATE PROCEDURE check_fk_constraint()
+BEGIN
+  IF @fk_name IS NULL THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'FK constraint not found on responses.color_id';
+  END IF;
+END$$
+DELIMITER ;
+
+CALL check_fk_constraint();
+DROP PROCEDURE check_fk_constraint;
 
 -- Drop the FK constraint using dynamic SQL
 SET @sql = CONCAT('ALTER TABLE responses DROP FOREIGN KEY ', @fk_name);
