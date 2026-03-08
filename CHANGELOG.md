@@ -1,3 +1,10 @@
+## [1.1.2-rc.1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.1.1...v1.1.2-rc.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* remove escaped backticks causing JavaScript syntax error in rc-release workflow ([17e23c6](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/17e23c646dd8876ef19bf2a04f232175562c0e9a))
+
 ## [1.1.1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.1.0...v1.1.1) (2026-03-08)
 
 
