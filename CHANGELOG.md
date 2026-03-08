@@ -1,3 +1,10 @@
+## [1.4.1-rc.4](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.1-rc.3...v1.4.1-rc.4) (2026-03-08)
+
+
+### Bug Fixes
+
+* use uppercase DOCTYPE in index.html for smoke test compatibility ([fef7dd2](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/fef7dd26951dd3fe039d472e98a9d8d61ab0830c))
+
 ## [1.4.1-rc.3](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.1-rc.2...v1.4.1-rc.3) (2026-03-08)
 
 
