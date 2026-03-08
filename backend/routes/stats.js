@@ -35,6 +35,13 @@ router.get('/personal', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching personal stats:', error);
+    // Return empty stats if table doesn't exist yet (fresh database)
+    if (error.code === 'ER_NO_SUCH_TABLE') {
+      return res.json({
+        totalClassified: 0,
+        firstToClassify: 0
+      });
+    }
     res.status(500).json({ error: 'Failed to fetch personal stats' });
   }
 });
@@ -95,6 +102,15 @@ router.get('/global', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching global stats:', error);
+    // Return empty stats if table doesn't exist yet (fresh database)
+    if (error.code === 'ER_NO_SUCH_TABLE') {
+      return res.json({
+        totalClassifications: 0,
+        uniqueUsers: 0,
+        totalColorsClassified: 0,
+        mostClassifiedColor: null
+      });
+    }
     res.status(500).json({ error: 'Failed to fetch global stats' });
   }
 });

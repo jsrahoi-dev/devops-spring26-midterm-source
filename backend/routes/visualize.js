@@ -75,6 +75,10 @@ router.get('/data', async (req, res) => {
     res.json({ colors: visualizationData, view });
   } catch (error) {
     console.error('Error fetching visualization data:', error);
+    // Return empty data if table doesn't exist yet (fresh database)
+    if (error.code === 'ER_NO_SUCH_TABLE') {
+      return res.json({ colors: [], view: req.query.view || 'global' });
+    }
     res.status(500).json({ error: 'Failed to fetch visualization data' });
   }
 });

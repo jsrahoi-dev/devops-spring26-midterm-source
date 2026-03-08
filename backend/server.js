@@ -4,6 +4,7 @@ const path = require('path');
 const db = require('./db/connection');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
+const { initDatabase } = require('./db/init');
 
 const sessionStore = new MySQLStore({
   host: process.env.DB_HOST,
@@ -82,6 +83,12 @@ app.use((req, res, next) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Initialize database tables on startup
+initDatabase().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
 });
