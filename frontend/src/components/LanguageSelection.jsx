@@ -4,6 +4,7 @@ import axios from 'axios'
 
 export default function LanguageSelection() {
   const [language, setLanguage] = useState('')
+  const [otherLanguage, setOtherLanguage] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
@@ -14,11 +15,15 @@ export default function LanguageSelection() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!language.trim()) return
+    const selectedLanguage = language === 'Other' ? otherLanguage : language
+
+    if (!selectedLanguage.trim() || (language === 'Other' && !otherLanguage.trim())) {
+      return
+    }
 
     setLoading(true)
     try {
-      await axios.post('/api/language', { language })
+      await axios.post('/api/language', { language: selectedLanguage })
       navigate('/classify')
     } catch (error) {
       console.error('Error setting language:', error)
@@ -68,8 +73,9 @@ export default function LanguageSelection() {
         {language === 'Other' && (
           <input
             type="text"
+            value={otherLanguage}
             placeholder="Enter your language"
-            onChange={(e) => setLanguage(e.target.value)}
+            onChange={(e) => setOtherLanguage(e.target.value)}
             style={{
               width: '100%',
               padding: '12px',
@@ -83,7 +89,7 @@ export default function LanguageSelection() {
 
         <button
           type="submit"
-          disabled={!language || loading}
+          disabled={!language || (language === 'Other' && !otherLanguage.trim()) || loading}
           style={{
             width: '100%',
             padding: '12px',
@@ -93,7 +99,7 @@ export default function LanguageSelection() {
             border: 'none',
             borderRadius: '4px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: (!language || loading) ? 0.6 : 1
+            opacity: (!language || (language === 'Other' && !otherLanguage.trim()) || loading) ? 0.6 : 1
           }}
         >
           {loading ? 'Starting...' : 'Begin'}
