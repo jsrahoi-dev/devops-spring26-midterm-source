@@ -28,6 +28,15 @@ WHERE rgb_r_new IS NULL OR rgb_g_new IS NULL OR rgb_b_new IS NULL OR hex_new IS 
 -- Expected result: 0 rows with missing values
 -- If count > 0, investigate before proceeding with the migration
 
+-- Enforce validation - fail migration if NULL values found
+SET @null_count = (SELECT COUNT(*) FROM responses WHERE rgb_r_new IS NULL OR rgb_g_new IS NULL OR rgb_b_new IS NULL OR hex_new IS NULL);
+
+-- Signal error if validation fails
+SET @validation_check = IF(@null_count > 0,
+  (SELECT SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Backfill validation failed: NULL values found'),
+  0
+);
+
 -- Step 4: Make columns NOT NULL (now that backfill is complete)
 ALTER TABLE responses
   MODIFY COLUMN rgb_r_new TINYINT UNSIGNED NOT NULL,
@@ -58,6 +67,12 @@ SET @fk_name = (
     AND COLUMN_NAME = 'color_id'
     AND REFERENCED_TABLE_NAME = 'colors'
   LIMIT 1
+);
+
+-- Verify FK constraint was found
+SET @fk_check = IF(@fk_name IS NULL,
+  (SELECT SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'FK constraint not found on responses.color_id'),
+  0
 );
 
 -- Drop the FK constraint using dynamic SQL
