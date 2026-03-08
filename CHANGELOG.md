@@ -1,3 +1,10 @@
+## [1.4.1-rc.2](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.1-rc.1...v1.4.1-rc.2) (2026-03-08)
+
+
+### Bug Fixes
+
+* handle fresh database in smoke tests ([21b1755](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/21b17559ccac174a21ec9c4d090c7bf01a14ab76))
+
 ## [1.4.1-rc.1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.0...v1.4.1-rc.1) (2026-03-08)
 
 
