@@ -19,11 +19,21 @@ router.post('/', async (req, res) => {
     });
   }
 
+  // Validate hex format
+  if (!/^#[0-9A-F]{6}$/i.test(hex)) {
+    return res.status(400).json({ error: 'Hex must be in format #RRGGBB' });
+  }
+
   // Validate RGB ranges
   if (rgb_r < 0 || rgb_r > 255 || rgb_g < 0 || rgb_g > 255 || rgb_b < 0 || rgb_b > 255) {
     return res.status(400).json({
       error: 'RGB values must be between 0 and 255'
     });
+  }
+
+  // Validate RGB values are integers
+  if (!Number.isInteger(rgb_r) || !Number.isInteger(rgb_g) || !Number.isInteger(rgb_b)) {
+    return res.status(400).json({ error: 'RGB values must be integers' });
   }
 
   if (!VALID_CLASSIFICATIONS.includes(classification)) {
@@ -55,6 +65,9 @@ router.post('/', async (req, res) => {
     }
 
     // Check if this will be the first classification for this RGB color
+    // Note: wasFirst has a small race condition window between count check and insert.
+    // For the scale of this application, the risk is acceptable. Could be eliminated
+    // with row-level locking or post-insert verification if needed.
     const [firstCheckRows] = await db.query(
       'SELECT COUNT(*) as count FROM responses WHERE rgb_r = ? AND rgb_g = ? AND rgb_b = ?',
       [rgb_r, rgb_g, rgb_b]
