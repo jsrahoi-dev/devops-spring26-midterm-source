@@ -3,7 +3,7 @@ name: Trigger RC Deployment
 on:
   push:
     tags:
-      - 'v*-rc.*'  # Matches v1.0.0-rc.1, v1.2.0-rc.2, etc.
+      - 'v*-rc*'  # Matches v1.0.0-rc.1, v1.2.0-rc.2, etc.
 
 jobs:
   trigger-infra-deploy:
