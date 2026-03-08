@@ -70,7 +70,7 @@ router.get('/global', async (req, res) => {
         hex,
         COUNT(*) as count
       FROM responses
-      GROUP BY rgb_r, rgb_g, rgb_b
+      GROUP BY rgb_r, rgb_g, rgb_b, hex
       ORDER BY count DESC
       LIMIT 1
     `);
