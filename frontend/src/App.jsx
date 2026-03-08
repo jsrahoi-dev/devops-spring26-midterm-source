@@ -4,6 +4,7 @@ import LanguageSelection from './components/LanguageSelection'
 import ColorClassifier from './components/ColorClassifier'
 import Results from './components/Results'
 import ColorCube3D from './components/ColorCube3D'
+import About from './components/About'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/classify" element={<ColorClassifier />} />
           <Route path="/results" element={<Results />} />
           <Route path="/explore" element={<ColorCube3D />} />
+          <Route path="/about" element={<About />} />
         </Route>
       </Routes>
     </div>
