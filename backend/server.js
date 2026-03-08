@@ -10,7 +10,7 @@ const sessionStore = new MySQLStore({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  createDatabaseTable: false, // We created it manually
+  createDatabaseTable: true, // Auto-create sessions table if it doesn't exist
   schema: {
     tableName: 'sessions',
     columnNames: {

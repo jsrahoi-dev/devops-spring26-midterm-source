@@ -33,14 +33,20 @@ router.get('/next', async (req, res) => {
       // Check if user already classified this exact RGB combination
       // Only check if we have a session ID
       if (sessionId) {
-        const [existing] = await db.query(`
-          SELECT id FROM responses
-          WHERE session_id = ? AND rgb_r = ? AND rgb_g = ? AND rgb_b = ?
-          LIMIT 1
-        `, [sessionId, rgb_r, rgb_g, rgb_b]);
+        try {
+          const [existing] = await db.query(`
+            SELECT id FROM responses
+            WHERE session_id = ? AND rgb_r = ? AND rgb_g = ? AND rgb_b = ?
+            LIMIT 1
+          `, [sessionId, rgb_r, rgb_g, rgb_b]);
 
-        if (existing.length === 0) {
-          // User hasn't seen this color yet
+          if (existing.length === 0) {
+            // User hasn't seen this color yet
+            break;
+          }
+        } catch (dbError) {
+          // Table might not exist yet (fresh database), just return color
+          console.warn('Could not check for existing responses:', dbError.message);
           break;
         }
       } else {
