@@ -10,10 +10,20 @@ const VALID_CLASSIFICATIONS = [
 
 // POST /api/responses - Submit a color classification
 router.post('/', async (req, res) => {
-  const { color_id, classification } = req.body;
+  const { rgb_r, rgb_g, rgb_b, hex, classification } = req.body;
 
-  if (!color_id || !classification) {
-    return res.status(400).json({ error: 'color_id and classification are required' });
+  // Validate required fields
+  if (rgb_r === undefined || rgb_g === undefined || rgb_b === undefined || !hex || !classification) {
+    return res.status(400).json({
+      error: 'rgb_r, rgb_g, rgb_b, hex, and classification are required'
+    });
+  }
+
+  // Validate RGB ranges
+  if (rgb_r < 0 || rgb_r > 255 || rgb_g < 0 || rgb_g > 255 || rgb_b < 0 || rgb_b > 255) {
+    return res.status(400).json({
+      error: 'RGB values must be between 0 and 255'
+    });
   }
 
   if (!VALID_CLASSIFICATIONS.includes(classification)) {
@@ -34,33 +44,27 @@ router.post('/', async (req, res) => {
 
     const sessionId = req.session.id;
 
-    // Check if color exists
-    const [colorRows] = await db.query('SELECT id FROM colors WHERE id = ?', [color_id]);
-    if (colorRows.length === 0) {
-      return res.status(404).json({ error: 'Color not found' });
-    }
-
-    // Check if already responded
+    // Check if already responded to this specific RGB color
     const [existingRows] = await db.query(
-      'SELECT id FROM responses WHERE session_id = ? AND color_id = ?',
-      [sessionId, color_id]
+      'SELECT id FROM responses WHERE session_id = ? AND rgb_r = ? AND rgb_g = ? AND rgb_b = ?',
+      [sessionId, rgb_r, rgb_g, rgb_b]
     );
 
     if (existingRows.length > 0) {
       return res.status(409).json({ error: 'Already responded to this color' });
     }
 
-    // Check if this will be the first classification
+    // Check if this will be the first classification for this RGB color
     const [firstCheckRows] = await db.query(
-      'SELECT COUNT(*) as count FROM responses WHERE color_id = ?',
-      [color_id]
+      'SELECT COUNT(*) as count FROM responses WHERE rgb_r = ? AND rgb_g = ? AND rgb_b = ?',
+      [rgb_r, rgb_g, rgb_b]
     );
     const wasFirst = firstCheckRows[0].count === 0;
 
-    // Insert response
+    // Insert response with RGB values
     await db.query(
-      'INSERT INTO responses (session_id, color_id, user_classification) VALUES (?, ?, ?)',
-      [sessionId, color_id, classification]
+      'INSERT INTO responses (session_id, rgb_r, rgb_g, rgb_b, hex, user_classification) VALUES (?, ?, ?, ?, ?, ?)',
+      [sessionId, rgb_r, rgb_g, rgb_b, hex, classification]
     );
 
     res.json({ success: true, wasFirst });
