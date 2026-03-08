@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.0.0...v1.0.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* ensure session is saved before inserting response ([c3811c2](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/c3811c2388fc342d6a2466043684edd40dcabfde))
+
 # 1.0.0 (2026-03-08)
 
 
