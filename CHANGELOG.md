@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.0...v1.4.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* include hex field in classification submission ([a5ef4ca](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/a5ef4cab552fda60d1b65ec94c741328d8cc2b52))
+
 # [1.4.0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.3.0...v1.4.0) (2026-03-08)
 
 
