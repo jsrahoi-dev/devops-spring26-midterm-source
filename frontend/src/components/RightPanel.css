@@ -1,0 +1,22 @@
+.right-panel {
+  flex: 1;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  min-height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
+.right-panel-content {
+  flex: 1;
+  overflow: auto;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .right-panel {
+    min-height: auto;
+    height: 50vh;
+  }
+}
