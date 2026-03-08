@@ -157,13 +157,13 @@ jobs:
 
             const title = `❌ RC Release Failed - ${failedStage} Stage - ${{ steps.version.outputs.VERSION }}`;
 
-            const body = \`## RC Release Failure Report
+            const body = `## RC Release Failure Report
 
-            **Failed Stage:** \${failedStage}
+            **Failed Stage:** ${failedStage}
             **Version:** ${{ steps.version.outputs.VERSION }}
             **Workflow Run:** [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
             **Triggered by:** ${{ github.event_name }}
-            **Time:** \${new Date().toISOString()}
+            **Time:** ${new Date().toISOString()}
 
             ### Stage Outcomes:
             - Checkout: ${{ steps.checkout.outcome }}
@@ -183,7 +183,7 @@ jobs:
             2. Verify AWS credentials and permissions
             3. If build failed, check Docker configuration
             4. If tests failed, check application health
-            5. Review recent code changes\`;
+            5. Review recent code changes`;
 
             // Check if issue already exists for today
             const today = new Date().toISOString().split('T')[0];
