@@ -1,3 +1,17 @@
+# [1.3.0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.2.0...v1.3.0) (2026-03-08)
+
+
+### Bug Fixes
+
+* simplify tag pattern for trigger workflow ([9ed262d](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/9ed262d4ee51fedb14d26be08be150476690c8aa))
+* use create event instead of push for tag triggers ([19e2985](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/19e29856cc9180d3ef78979cd372246c1409ecab))
+* use PAT for semantic-release to allow triggering other workflows ([e8b8609](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/e8b8609fb53028daf22ec6a7ea0e785560a23f20))
+
+
+### Features
+
+* auto-trigger RC deployment when RC tag is created ([791026c](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/791026c0e717a04e9c6761df03521145da8fe8c0))
+
 # [1.2.0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.1.2...v1.2.0) (2026-03-08)
 
 
