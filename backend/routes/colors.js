@@ -6,6 +6,11 @@ const db = require('../db/connection');
 // GET /api/colors/next - Generate random RGB color
 router.get('/next', async (req, res) => {
   try {
+    // Ensure session exists and is saved
+    if (!req.session) {
+      return res.status(500).json({ error: 'Session not initialized' });
+    }
+
     const sessionId = req.session.id;
     let rgb_r, rgb_g, rgb_b, hex;
     let attempts = 0;
@@ -26,14 +31,20 @@ router.get('/next', async (req, res) => {
         rgb_b.toString(16).padStart(2, '0').toUpperCase();
 
       // Check if user already classified this exact RGB combination
-      const [existing] = await db.query(`
-        SELECT id FROM responses
-        WHERE session_id = ? AND rgb_r = ? AND rgb_g = ? AND rgb_b = ?
-        LIMIT 1
-      `, [sessionId, rgb_r, rgb_g, rgb_b]);
+      // Only check if we have a session ID
+      if (sessionId) {
+        const [existing] = await db.query(`
+          SELECT id FROM responses
+          WHERE session_id = ? AND rgb_r = ? AND rgb_g = ? AND rgb_b = ?
+          LIMIT 1
+        `, [sessionId, rgb_r, rgb_g, rgb_b]);
 
-      if (existing.length === 0) {
-        // User hasn't seen this color yet
+        if (existing.length === 0) {
+          // User hasn't seen this color yet
+          break;
+        }
+      } else {
+        // No session yet, just return first generated color
         break;
       }
 
