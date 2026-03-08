@@ -14,17 +14,17 @@ router.get('/personal', async (req, res) => {
     );
     const totalClassified = totalRows[0].count;
 
-    // Count first-to-classify (based on RGB values)
+    // Count first-to-classify (user was first to classify specific RGB)
     const [firstRows] = await db.query(`
       SELECT COUNT(*) as count
       FROM responses r1
-      JOIN colors c1 ON r1.color_id = c1.id
       WHERE r1.session_id = ?
         AND r1.classified_at = (
-          SELECT MIN(r2.classified_at)
+          SELECT MIN(classified_at)
           FROM responses r2
-          JOIN colors c2 ON r2.color_id = c2.id
-          WHERE c2.r = c1.r AND c2.g = c1.g AND c2.b = c1.b
+          WHERE r2.rgb_r = r1.rgb_r
+            AND r2.rgb_g = r1.rgb_g
+            AND r2.rgb_b = r1.rgb_b
         )
     `, [sessionId]);
     const firstToClassify = firstRows[0].count;
