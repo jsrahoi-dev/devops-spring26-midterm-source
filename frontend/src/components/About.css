@@ -41,3 +41,17 @@
 .about-section:last-child {
   margin-bottom: 0;
 }
+
+@media (max-width: 768px) {
+  .about-container {
+    padding: 30px 20px;
+  }
+
+  .about-container h1 {
+    font-size: 2rem;
+  }
+
+  .about-section h2 {
+    font-size: 1.25rem;
+  }
+}
