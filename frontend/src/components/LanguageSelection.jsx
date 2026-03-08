@@ -32,6 +32,7 @@ export default function LanguageSelection() {
     setLoading(true)
     try {
       await axios.post('/api/language', { language: selectedLanguage })
+      Cookies.set('user_language', selectedLanguage, { expires: 30 }) // 30 days
       navigate('/classify')
     } catch (error) {
       console.error('Error setting language:', error)
