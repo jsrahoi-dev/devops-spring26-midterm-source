@@ -54,6 +54,9 @@ app.use('/api/results', resultsRoutes);
 const visualizeRoutes = require('./routes/visualize');
 app.use('/api/visualize', visualizeRoutes);
 
+const statsRoutes = require('./routes/stats');
+app.use('/api/stats', statsRoutes);
+
 app.get('/api/health', async (req, res) => {
   try {
     await db.query('SELECT 1');

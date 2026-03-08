@@ -4,6 +4,7 @@ import axios from 'axios'
 
 export default function LanguageSelection() {
   const [language, setLanguage] = useState('')
+  const [otherLanguage, setOtherLanguage] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
@@ -14,11 +15,15 @@ export default function LanguageSelection() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!language.trim()) return
+    const selectedLanguage = language === 'Other' ? otherLanguage : language
+
+    if (!selectedLanguage.trim() || (language === 'Other' && !otherLanguage.trim())) {
+      return
+    }
 
     setLoading(true)
     try {
-      await axios.post('/api/language', { language })
+      await axios.post('/api/language', { language: selectedLanguage })
       navigate('/classify')
     } catch (error) {
       console.error('Error setting language:', error)
@@ -38,11 +43,12 @@ export default function LanguageSelection() {
       backgroundColor: '#f5f5f5',
       padding: '20px'
     }}>
-      <h1>Color Perception Study</h1>
-      <p style={{ maxWidth: '600px', textAlign: 'center', marginBottom: '30px' }}>
-        Welcome! This study explores how people perceive and classify colors.
-        You'll see 5 colors and classify each one. First, please tell us your native language.
-      </p>
+      <div style={{ maxWidth: '600px', textAlign: 'center', marginBottom: '40px' }}>
+        <h1 style={{ fontSize: '36px', marginBottom: '20px' }}>Color Perception Study</h1>
+        <p style={{ fontSize: '18px', color: '#666', marginBottom: '30px' }}>
+          Help us understand how people perceive and name colors across different languages and cultures.
+        </p>
+      </div>
 
       <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: '400px' }}>
         <select
@@ -67,8 +73,9 @@ export default function LanguageSelection() {
         {language === 'Other' && (
           <input
             type="text"
+            value={otherLanguage}
             placeholder="Enter your language"
-            onChange={(e) => setLanguage(e.target.value)}
+            onChange={(e) => setOtherLanguage(e.target.value)}
             style={{
               width: '100%',
               padding: '12px',
@@ -82,7 +89,7 @@ export default function LanguageSelection() {
 
         <button
           type="submit"
-          disabled={!language || loading}
+          disabled={!language || (language === 'Other' && !otherLanguage.trim()) || loading}
           style={{
             width: '100%',
             padding: '12px',
@@ -92,7 +99,7 @@ export default function LanguageSelection() {
             border: 'none',
             borderRadius: '4px',
             cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: (!language || loading) ? 0.6 : 1
+            opacity: (!language || (language === 'Other' && !otherLanguage.trim()) || loading) ? 0.6 : 1
           }}
         >
           {loading ? 'Starting...' : 'Begin'}

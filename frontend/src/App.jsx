@@ -1,17 +1,24 @@
 import { Routes, Route } from 'react-router-dom'
+import Layout from './components/Layout'
 import LanguageSelection from './components/LanguageSelection'
 import ColorClassifier from './components/ColorClassifier'
 import Results from './components/Results'
 import ColorCube3D from './components/ColorCube3D'
+import About from './components/About'
+import Blog from './components/Blog'
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<LanguageSelection />} />
-        <Route path="/classify" element={<ColorClassifier />} />
-        <Route path="/results" element={<Results />} />
-        <Route path="/explore" element={<ColorCube3D />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<LanguageSelection />} />
+          <Route path="/classify" element={<ColorClassifier />} />
+          <Route path="/results" element={<Results />} />
+          <Route path="/explore" element={<ColorCube3D />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/blog" element={<Blog />} />
+        </Route>
       </Routes>
     </div>
   )

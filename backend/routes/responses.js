@@ -50,13 +50,20 @@ router.post('/', async (req, res) => {
       return res.status(409).json({ error: 'Already responded to this color' });
     }
 
+    // Check if this will be the first classification
+    const [firstCheckRows] = await db.query(
+      'SELECT COUNT(*) as count FROM responses WHERE color_id = ?',
+      [color_id]
+    );
+    const wasFirst = firstCheckRows[0].count === 0;
+
     // Insert response
     await db.query(
       'INSERT INTO responses (session_id, color_id, user_classification) VALUES (?, ?, ?)',
       [sessionId, color_id, classification]
     );
 
-    res.json({ success: true });
+    res.json({ success: true, wasFirst });
   } catch (error) {
     console.error('Error saving response:', error);
     res.status(500).json({ error: 'Failed to save response' });

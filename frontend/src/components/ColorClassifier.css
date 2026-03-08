@@ -1,0 +1,21 @@
+.color-classifier {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 60px);
+}
+
+.color-classifier > * {
+  width: 50%;
+}
+
+/* Mobile responsive - stack vertically */
+@media (max-width: 768px) {
+  .color-classifier {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .color-classifier > * {
+    width: 100%;
+  }
+}
