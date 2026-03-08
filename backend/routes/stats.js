@@ -67,6 +67,7 @@ router.get('/global', async (req, res) => {
         rgb_r,
         rgb_g,
         rgb_b,
+        hex,
         COUNT(*) as count
       FROM responses
       GROUP BY rgb_r, rgb_g, rgb_b
@@ -81,6 +82,7 @@ router.get('/global', async (req, res) => {
             g: mostClassifiedRows[0].rgb_g,
             b: mostClassifiedRows[0].rgb_b
           },
+          hex: mostClassifiedRows[0].hex,
           count: mostClassifiedRows[0].count
         }
       : null;
