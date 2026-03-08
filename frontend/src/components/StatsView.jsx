@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './StatsView.css'
 
+function formatColorCount(count) {
+  if (!count) return '0 / 16.7M';
+  return `${count.toLocaleString()} / 16.7M`;
+}
+
 export default function StatsView() {
   const [personalStats, setPersonalStats] = useState(null)
   const [globalStats, setGlobalStats] = useState(null)
@@ -54,37 +59,13 @@ export default function StatsView() {
         <div className="stat-item">
           <span className="stat-icon">🎨</span>
           <span className="stat-label">Colors Classified:</span>
-          <span className="stat-value">{personalStats.totalClassified}/20</span>
+          <span className="stat-value">{personalStats.totalClassified}</span>
         </div>
         <div className="stat-item">
           <span className="stat-icon">🥇</span>
           <span className="stat-label">First to Classify:</span>
           <span className="stat-value">{personalStats.firstToClassify}</span>
         </div>
-
-        {personalStats.controversialColors.length > 0 && (
-          <div className="controversial-section">
-            <h4>⚡ Most Controversial:</h4>
-            {personalStats.controversialColors.map(color => (
-              <div key={color.id} className="controversial-item">
-                <div
-                  className="color-swatch"
-                  style={{ backgroundColor: color.hex }}
-                ></div>
-                <div className="controversial-details">
-                  <div className="color-hex">{color.hex}</div>
-                  <div className="classifications">
-                    You: <strong>{color.yourClassification}</strong> |
-                    Most: <strong>{color.majorityClassification}</strong>
-                  </div>
-                  <div className="disagreement">
-                    {color.disagreementCount} people disagreed
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </section>
 
       <section className="stats-section global-stats">
@@ -101,10 +82,8 @@ export default function StatsView() {
         </div>
         <div className="stat-item">
           <span className="stat-icon">🌈</span>
-          <span className="stat-label">Coverage:</span>
-          <span className="stat-value">
-            {globalStats.percentageCovered}% ({globalStats.totalColors})
-          </span>
+          <span className="stat-label">Colors Classified:</span>
+          <span className="stat-value">{formatColorCount(globalStats.totalColors)}</span>
         </div>
         {globalStats.mostClassifiedColor && (
           <div className="stat-item">
