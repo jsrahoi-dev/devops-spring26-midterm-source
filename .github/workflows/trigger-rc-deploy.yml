@@ -1,0 +1,35 @@
+name: Trigger RC Deployment
+
+on:
+  push:
+    tags:
+      - 'v*-rc.*'  # Matches v1.0.0-rc.1, v1.2.0-rc.2, etc.
+
+jobs:
+  trigger-infra-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 RC tag created: $VERSION"
+      
+      - name: Trigger infra repo deployment
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.INFRA_REPO_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/jsrahoi-dev/devops-spring26-midterm-infra/dispatches \
+            -d "{\"event_type\":\"rc-release\",\"client_payload\":{\"version\":\"${{ steps.version.outputs.VERSION }}\"}}"
+      
+      - name: Confirmation
+        run: |
+          echo "✅ Triggered RC deployment in infra repo"
+          echo "Version: ${{ steps.version.outputs.VERSION }}"
+          echo "Monitor: https://github.com/jsrahoi-dev/devops-spring26-midterm-infra/actions/workflows/rc-build.yml"
