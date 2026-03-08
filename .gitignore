@@ -137,3 +137,17 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# Backend build output (frontend assets served by backend)
+backend/public/
+
+# Presentation exports (generated from source)
+*.pdf
+*.pptx
+*.html
+!frontend/index.html
