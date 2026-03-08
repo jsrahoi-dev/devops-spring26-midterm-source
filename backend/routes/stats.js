@@ -42,10 +42,6 @@ router.get('/personal', async (req, res) => {
 // GET /api/stats/global - Get platform-wide statistics
 router.get('/global', async (req, res) => {
   try {
-    // Total colors
-    const [totalColorsRows] = await db.query('SELECT COUNT(*) as count FROM colors');
-    const totalColors = totalColorsRows[0].count;
-
     // Total classifications
     const [totalClassificationsRows] = await db.query(
       'SELECT COUNT(*) as count FROM responses'
@@ -58,39 +54,41 @@ router.get('/global', async (req, res) => {
     );
     const uniqueUsers = uniqueUsersRows[0].count;
 
-    // Coverage (colors with at least one classification)
-    const [coverageRows] = await db.query(`
-      SELECT COUNT(DISTINCT color_id) as count
+    // Total colors classified (distinct RGB combinations)
+    const [totalColorsRows] = await db.query(`
+      SELECT COUNT(DISTINCT CONCAT(rgb_r, '-', rgb_g, '-', rgb_b)) as count
       FROM responses
     `);
-    const colorsClassified = coverageRows[0].count;
-    const percentageCovered = totalColors > 0
-      ? ((colorsClassified / totalColors) * 100).toFixed(1)
-      : 0;
+    const totalColorsClassified = totalColorsRows[0].count;
 
     // Most classified color
     const [mostClassifiedRows] = await db.query(`
-      SELECT c.id, c.hex, COUNT(*) as count
-      FROM responses r
-      JOIN colors c ON r.color_id = c.id
-      GROUP BY c.id, c.hex
+      SELECT
+        rgb_r,
+        rgb_g,
+        rgb_b,
+        COUNT(*) as count
+      FROM responses
+      GROUP BY rgb_r, rgb_g, rgb_b
       ORDER BY count DESC
       LIMIT 1
     `);
 
     const mostClassifiedColor = mostClassifiedRows.length > 0
       ? {
-          id: mostClassifiedRows[0].id,
-          hex: mostClassifiedRows[0].hex,
+          rgb: {
+            r: mostClassifiedRows[0].rgb_r,
+            g: mostClassifiedRows[0].rgb_g,
+            b: mostClassifiedRows[0].rgb_b
+          },
           count: mostClassifiedRows[0].count
         }
       : null;
 
     res.json({
-      totalColors,
       totalClassifications,
       uniqueUsers,
-      percentageCovered: parseFloat(percentageCovered),
+      totalColorsClassified,
       mostClassifiedColor
     });
   } catch (error) {
