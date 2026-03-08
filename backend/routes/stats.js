@@ -14,65 +14,24 @@ router.get('/personal', async (req, res) => {
     );
     const totalClassified = totalRows[0].count;
 
-    // Count first-to-classify
+    // Count first-to-classify (based on RGB values)
     const [firstRows] = await db.query(`
       SELECT COUNT(*) as count
       FROM responses r1
+      JOIN colors c1 ON r1.color_id = c1.id
       WHERE r1.session_id = ?
         AND r1.classified_at = (
-          SELECT MIN(classified_at)
+          SELECT MIN(r2.classified_at)
           FROM responses r2
-          WHERE r2.color_id = r1.color_id
+          JOIN colors c2 ON r2.color_id = c2.id
+          WHERE c2.r = c1.r AND c2.g = c1.g AND c2.b = c1.b
         )
     `, [sessionId]);
     const firstToClassify = firstRows[0].count;
 
-    // Get controversial colors (where user disagrees with majority)
-    const [controversialRows] = await db.query(`
-      SELECT
-        c.id,
-        c.hex,
-        r.user_classification as yourClassification,
-        (
-          SELECT user_classification
-          FROM responses r2
-          WHERE r2.color_id = c.id
-          GROUP BY user_classification
-          ORDER BY COUNT(*) DESC
-          LIMIT 1
-        ) as majorityClassification,
-        (
-          SELECT COUNT(*)
-          FROM responses r3
-          WHERE r3.color_id = c.id
-        ) as totalResponses
-      FROM responses r
-      JOIN colors c ON r.color_id = c.id
-      WHERE r.session_id = ?
-        AND r.user_classification != (
-          SELECT user_classification
-          FROM responses r2
-          WHERE r2.color_id = c.id
-          GROUP BY user_classification
-          ORDER BY COUNT(*) DESC
-          LIMIT 1
-        )
-      ORDER BY totalResponses DESC
-      LIMIT 3
-    `, [sessionId]);
-
-    const controversialColors = controversialRows.map(row => ({
-      id: row.id,
-      hex: row.hex,
-      yourClassification: row.yourClassification,
-      majorityClassification: row.majorityClassification,
-      disagreementCount: row.totalResponses
-    }));
-
     res.json({
       totalClassified,
-      firstToClassify,
-      controversialColors
+      firstToClassify
     });
   } catch (error) {
     console.error('Error fetching personal stats:', error);
