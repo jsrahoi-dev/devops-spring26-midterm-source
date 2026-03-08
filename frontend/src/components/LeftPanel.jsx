@@ -6,23 +6,10 @@ export default function LeftPanel({ color, onClassify, loading }) {
     'blue', 'purple', 'brown', 'black', 'white', 'grey'
   ]
 
-  if (loading) {
+  if (loading || !color) {
     return (
       <div className="left-panel" style={{ backgroundColor: '#ccc' }}>
         <div className="loading-message">Loading color...</div>
-      </div>
-    )
-  }
-
-  if (!color) {
-    return (
-      <div className="left-panel" style={{ backgroundColor: '#f0f0f0' }}>
-        <div className="classification-container">
-          <h2 className="classification-prompt">🎉 All colors classified!</h2>
-          <p style={{ color: 'white', textAlign: 'center', fontSize: '18px', textShadow: '0 0 10px rgba(0, 0, 0, 0.8)' }}>
-            Check out your stats on the right →
-          </p>
-        </div>
       </div>
     )
   }
