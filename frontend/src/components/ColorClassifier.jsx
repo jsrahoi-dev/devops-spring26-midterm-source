@@ -9,10 +9,6 @@ export default function ColorClassifier() {
   const [loading, setLoading] = useState(true)
   const [statsRefreshKey, setStatsRefreshKey] = useState(0)
 
-  useEffect(() => {
-    fetchColor()
-  }, [])
-
   const fetchColor = async () => {
     try {
       setLoading(true)
@@ -26,6 +22,11 @@ export default function ColorClassifier() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchColor()
+  }, [])
 
   const handleClassification = async (classification) => {
     if (!color) return

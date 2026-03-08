@@ -14,7 +14,7 @@ function ColorPoint({ position, color, data, onClick }) {
   )
 }
 
-function ColorCube({ colors, mode }) {
+function ColorCube({ colors }) {
   const [selected, setSelected] = useState(null)
 
   const getColorPoints = () => {

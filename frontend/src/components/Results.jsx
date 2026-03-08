@@ -6,10 +6,6 @@ export default function Results() {
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchResults()
-  }, [])
-
   const fetchResults = async () => {
     try {
       const { data } = await axios.get('/api/results/mine')
@@ -20,6 +16,11 @@ export default function Results() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchResults()
+  }, [])
 
   if (loading) {
     return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
