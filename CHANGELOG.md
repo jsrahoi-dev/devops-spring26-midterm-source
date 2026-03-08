@@ -1,3 +1,34 @@
+# [1.4.0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.3.0...v1.4.0) (2026-03-08)
+
+
+### Bug Fixes
+
+* add automated validation and error checks to migration ([8ef512e](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/8ef512e5a81ea8be4e2e9796837aef724692850e))
+* add hex field to mostClassifiedColor in global stats ([f6aad32](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/f6aad324f47be9b5fd48578f1f530e7de45bfff7))
+* add type and format validation to responses endpoint ([3bd669a](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/3bd669a98ec38344f44ac3fbe3adb1c4e63f702f))
+* add validation and document N+1 pattern in visualize endpoint ([9cb2162](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/9cb21629dcedc98e19ddf7c83047a0f6054df9f0))
+* improve migration safety and rollback script ([add7fb7](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/add7fb7024b3ced95a68e28e9fb3be912689f0c8))
+* include hex in GROUP BY clause for mostClassifiedColor ([9af34e5](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/9af34e592ce7d07df144dfcc6f41329e9cecba89))
+* trust nginx proxy for session persistence ([5e2b49e](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/5e2b49e29061ffd319290e92d95d499201773d2c))
+* use RGB columns directly in personal stats query ([4417ecd](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/4417ecd6b33c7512e888a5cf22b827f83be90060))
+* use stored procedure for SIGNAL statements in migration ([e2405bd](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/e2405bdbe43d64456e158703d7245cc5cfe2f934))
+* use totalColorsClassified property name in StatsView ([ae3f695](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/ae3f69580b0f177af3acf0c943db18718c10903d))
+
+
+### Features
+
+* accept RGB values instead of color_id in responses endpoint ([79176b4](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/79176b42af84116ee43e54826f013b6047f03d00))
+* add comprehensive backend testing with Jest ([21948dd](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/21948ddee18e61bd1eb32d1f127a4886418745b0))
+* add migration for RGB columns in responses table ([82cd987](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/82cd987459a9d4f1efa53e976fa64a1dc84a8c68))
+* add personal/global toggle to color cube visualization ([1a8faea](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/1a8faeae294ec05d6240ac40206c1c5bfc9a09f5))
+* add personal/global view toggle to visualize endpoint ([ae196b5](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/ae196b5310e27e065e122be68e3201c1606c2628))
+* generate random RGB colors instead of querying colors table ([246eea6](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/246eea63d3421a19b3cb40f8728bd3cdc7d3288c))
+* remove color completion state (unlimited colors) ([5ed4657](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/5ed46578b36ddc0b4962e6c7cac5c99237928049))
+* send RGB values instead of color_id, remove done state ([1c35d85](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/1c35d8534b7feb34a38744775d5b2498079a0522))
+* simplify personal stats (remove controversial colors) ([8c6125f](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/8c6125fe080e1ae41bda51c8b661d986b85873a8))
+* update global stats for unlimited RGB color space ([a886b9e](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/a886b9e275f3a737f3e3bbeaa278e5adfa27837f))
+* update stats display for unlimited colors (remove /20, add X/16.7M) ([be500a3](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/be500a32841afacf454ad61d0671cf210235dc22))
+
 # [1.3.0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.2.0...v1.3.0) (2026-03-08)
 
 
