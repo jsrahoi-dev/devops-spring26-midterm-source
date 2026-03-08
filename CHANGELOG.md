@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.1...v1.4.2) (2026-03-08)
+
+
+### Bug Fixes
+
+* remove unused expect import from test setup ([6619afc](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/6619afcf9959b046e73a8c9ffdcff14dedfd4efc))
+
 ## [1.4.1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.0...v1.4.1) (2026-03-08)
 
 
