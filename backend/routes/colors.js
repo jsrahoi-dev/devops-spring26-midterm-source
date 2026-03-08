@@ -3,52 +3,53 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/connection');
 
-// GET /api/colors/next - Get random color for classification
+// GET /api/colors/next - Generate random RGB color
 router.get('/next', async (req, res) => {
   try {
-    // Get colors user hasn't responded to yet
     const sessionId = req.session.id;
+    let rgb_r, rgb_g, rgb_b, hex;
+    let attempts = 0;
+    const maxAttempts = 3;
 
-    const [rows] = await db.query(`
-      SELECT c.id, c.rgb_r, c.rgb_g, c.rgb_b, c.hex
-      FROM colors c
-      WHERE c.id NOT IN (
-        SELECT color_id FROM responses WHERE session_id = ?
-      )
-      ORDER BY RAND()
-      LIMIT 1
-    `, [sessionId]);
+    // Try to generate a color the user hasn't classified yet
+    // After maxAttempts, just return whatever we generated
+    while (attempts < maxAttempts) {
+      // Generate random RGB values (0-255)
+      rgb_r = Math.floor(Math.random() * 256);
+      rgb_g = Math.floor(Math.random() * 256);
+      rgb_b = Math.floor(Math.random() * 256);
 
-    if (rows.length === 0) {
-      return res.json({ done: true, message: 'No more colors available' });
+      // Convert to hex
+      hex = '#' +
+        rgb_r.toString(16).padStart(2, '0').toUpperCase() +
+        rgb_g.toString(16).padStart(2, '0').toUpperCase() +
+        rgb_b.toString(16).padStart(2, '0').toUpperCase();
+
+      // Check if user already classified this exact RGB combination
+      const [existing] = await db.query(`
+        SELECT id FROM responses
+        WHERE session_id = ? AND rgb_r = ? AND rgb_g = ? AND rgb_b = ?
+        LIMIT 1
+      `, [sessionId, rgb_r, rgb_g, rgb_b]);
+
+      if (existing.length === 0) {
+        // User hasn't seen this color yet
+        break;
+      }
+
+      attempts++;
     }
 
-    res.json({ color: rows[0] });
+    // Return the color
+    res.json({
+      rgb_r,
+      rgb_g,
+      rgb_b,
+      hex
+    });
   } catch (error) {
-    console.error('Error fetching color:', error);
-    res.status(500).json({ error: 'Failed to fetch color' });
-  }
-});
-
-// GET /api/colors/count - Count remaining colors for user
-router.get('/count', async (req, res) => {
-  try {
-    const sessionId = req.session.id;
-
-    const [totalRows] = await db.query('SELECT COUNT(*) as total FROM colors');
-    const [answeredRows] = await db.query(
-      'SELECT COUNT(*) as answered FROM responses WHERE session_id = ?',
-      [sessionId]
-    );
-
-    const total = totalRows[0].total;
-    const answered = answeredRows[0].answered;
-    const remaining = total - answered;
-
-    res.json({ total, answered, remaining });
-  } catch (error) {
-    console.error('Error counting colors:', error);
-    res.status(500).json({ error: 'Failed to count colors' });
+    console.error('Error generating color:', error);
+    res.status(500).json({ error: 'Failed to generate color' });
   }
 });
 
