@@ -1,3 +1,10 @@
+## [1.4.1-rc.3](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.1-rc.2...v1.4.1-rc.3) (2026-03-08)
+
+
+### Bug Fixes
+
+* add database initialization on startup for smoke tests ([4bb6308](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/4bb63085922eaf82dc63db7170e7aa9331cbb17f))
+
 ## [1.4.1-rc.2](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.1-rc.1...v1.4.1-rc.2) (2026-03-08)
 
 
