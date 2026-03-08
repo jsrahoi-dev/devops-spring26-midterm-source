@@ -1,3 +1,31 @@
+# [1.1.0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.0.1...v1.1.0) (2026-03-08)
+
+
+### Bug Fixes
+
+* **ui:** add null safety checks to StatsView rendering ([8d822c1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/8d822c1ec429a788370eebf6c942b3e3b24d1cff))
+* **ui:** match About page styles to spec (gradient background, card design) ([dcf4f17](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/dcf4f172bd6b57cf22426fa5c8b77d8d1b84a930))
+* **ui:** prevent memory leak in StatsView by adding cleanup to useEffect ([996140d](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/996140dfbe74878eac61db727d2a0acdd7f9f5e1))
+* **ui:** prevent Other input disappearing and show completion message when all colors classified ([9ed12a6](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/9ed12a635a62a8d3db27271fd98ecf561138dcb7))
+
+
+### Features
+
+* **api:** add global stats endpoint ([82da819](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/82da8199e7bdf8c37baa3252967143e6ed08f708))
+* **api:** add personal stats endpoint ([2d9a5da](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/2d9a5da6b144e59cc56452964af6c5db38d7f0fe))
+* **api:** return wasFirst flag in response endpoint ([3b63f58](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/3b63f5826a0508685d3facb384b49e2379ac8df3))
+* **db:** add classified_at timestamp to responses table ([b93e711](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/b93e7110017815fa0e6e22ed995fa6f47c78fec1))
+* **ui:** add About page with placeholder content ([d1df44b](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/d1df44ba5cb512bb7f9d30bdd95c4b8868ee917a))
+* **ui:** add Blog page with DevOps writeup placeholder ([9023d78](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/9023d7820f172f22fc555144fbe30b7e1bf6f911))
+* **ui:** add Layout wrapper with Navbar ([b4210e3](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/b4210e3b13b735d6bf603bec68a05d2b858127ff))
+* **ui:** add LeftPanel component for color classification ([edf7860](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/edf7860b276d6b2a5925b723be6dc6c3f1dd86c1))
+* **ui:** add Navbar component ([d5c38e8](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/d5c38e8be3f5972b219caa9cb13bb6c7e7ad5040))
+* **ui:** add RightPanel component with toggle functionality ([104bc50](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/104bc50458657339532f8affab439f131fa273fa))
+* **ui:** add StatsView component for personal and global stats ([8d5ece0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/8d5ece0ddfe5bbfd8e18948dd6bbeaa54357de49))
+* **ui:** add ViewToggle component for stats/cube switching ([01d0c12](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/01d0c123a1cae6df7bf07c3ef01974134af47261))
+* **ui:** add welcoming intro text to home page ([f39df32](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/f39df32428864a1244008e3b9361288a32d509b1))
+* **ui:** refactor ColorClassifier to split-screen layout ([8c99c3c](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/8c99c3c5edaea11b77341e9f0715d03f5b7359e8))
+
 ## [1.0.1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.0.0...v1.0.1) (2026-03-08)
 
 
