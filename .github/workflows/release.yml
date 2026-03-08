@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+      - rc
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install semantic-release
+        run: |
+          npm install -g semantic-release@23 \
+            @semantic-release/changelog@6 \
+            @semantic-release/git@10 \
+            @semantic-release/github@10 \
+            @semantic-release/commit-analyzer@11 \
+            @semantic-release/release-notes-generator@12
+
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_AUTHOR_NAME: semantic-release-bot
+          GIT_AUTHOR_EMAIL: semantic-release-bot@rahoi.dev
+          GIT_COMMITTER_NAME: semantic-release-bot
+          GIT_COMMITTER_EMAIL: semantic-release-bot@rahoi.dev
+        run: npx semantic-release
+
+      - name: Release summary
+        if: success()
+        run: |
+          echo "### ✅ Semantic Release Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the Releases page for new release tags." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Note:** If a tag was created, it will trigger the RC release workflow automatically." >> $GITHUB_STEP_SUMMARY
