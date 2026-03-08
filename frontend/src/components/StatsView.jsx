@@ -9,25 +9,35 @@ export default function StatsView() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetchStats()
-  }, [])
+    let isMounted = true
 
-  const fetchStats = async () => {
-    try {
-      const [personalRes, globalRes] = await Promise.all([
-        axios.get('/api/stats/personal'),
-        axios.get('/api/stats/global')
-      ])
+    const fetchStats = async () => {
+      try {
+        const [personalRes, globalRes] = await Promise.all([
+          axios.get('/api/stats/personal'),
+          axios.get('/api/stats/global')
+        ])
 
-      setPersonalStats(personalRes.data)
-      setGlobalStats(globalRes.data)
-      setLoading(false)
-    } catch (err) {
-      console.error('Error fetching stats:', err)
-      setError('Failed to load statistics')
-      setLoading(false)
+        if (isMounted) {
+          setPersonalStats(personalRes.data)
+          setGlobalStats(globalRes.data)
+          setLoading(false)
+        }
+      } catch (err) {
+        console.error('Error fetching stats:', err)
+        if (isMounted) {
+          setError('Failed to load statistics')
+          setLoading(false)
+        }
+      }
     }
-  }
+
+    fetchStats()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   if (loading) {
     return <div className="stats-view loading">Loading stats...</div>
