@@ -7,7 +7,13 @@ const db = require('../db/connection');
 router.get('/data', async (req, res) => {
   try {
     const view = req.query.view || 'global';
+    if (!['personal', 'global'].includes(view)) {
+      return res.status(400).json({ error: 'Invalid view parameter. Must be "personal" or "global"' });
+    }
     const sessionId = req.session.id;
+    if (view === 'personal' && !sessionId) {
+      return res.status(401).json({ error: 'Session required for personal view' });
+    }
 
     let distinctColorsQuery;
     let queryParams;
@@ -32,6 +38,8 @@ router.get('/data', async (req, res) => {
     const [distinctColors] = await db.query(distinctColorsQuery, queryParams);
     const visualizationData = [];
 
+    // Note: This has an N+1 query pattern (one query per color). For better performance,
+    // this could be refactored to use a single GROUP BY query. Acceptable for current scale.
     for (const color of distinctColors) {
       // Get all responses for this RGB combination
       const [responses] = await db.query(`
