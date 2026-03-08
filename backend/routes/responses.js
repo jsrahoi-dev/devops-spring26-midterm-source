@@ -24,6 +24,14 @@ router.post('/', async (req, res) => {
   }
 
   try {
+    // Ensure session is saved to database before inserting response
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
     const sessionId = req.session.id;
 
     // Check if color exists
