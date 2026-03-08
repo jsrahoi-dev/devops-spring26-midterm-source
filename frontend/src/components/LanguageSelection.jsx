@@ -1,12 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 export default function LanguageSelection() {
   const [language, setLanguage] = useState('')
   const [otherLanguage, setOtherLanguage] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const savedLanguage = Cookies.get('user_language')
+    if (savedLanguage) {
+      navigate('/classify')
+    }
+  }, [navigate])
 
   const commonLanguages = [
     'English', 'Spanish', 'Mandarin', 'Hindi', 'Arabic',
@@ -24,6 +32,12 @@ export default function LanguageSelection() {
     setLoading(true)
     try {
       await axios.post('/api/language', { language: selectedLanguage })
+      Cookies.set('user_language', selectedLanguage, {
+        expires: 30,
+        secure: import.meta.env.PROD,
+        sameSite: 'strict',
+        path: '/'
+      })
       navigate('/classify')
     } catch (error) {
       console.error('Error setting language:', error)
