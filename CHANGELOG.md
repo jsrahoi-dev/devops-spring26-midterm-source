@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.1.0...v1.1.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* correct YAML indentation in rc-release workflow template literal ([bbd6edc](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/bbd6edce1a296a2bb7383f7a75a6f5d2571bd2a6))
+
 # [1.1.0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.0.1...v1.1.0) (2026-03-08)
 
 
