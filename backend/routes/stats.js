@@ -14,7 +14,7 @@ router.get('/personal', async (req, res) => {
     );
     const totalClassified = totalRows[0].count;
 
-    // Count first-to-classify
+    // Count first-to-classify (user was first to classify specific RGB)
     const [firstRows] = await db.query(`
       SELECT COUNT(*) as count
       FROM responses r1
@@ -22,57 +22,16 @@ router.get('/personal', async (req, res) => {
         AND r1.classified_at = (
           SELECT MIN(classified_at)
           FROM responses r2
-          WHERE r2.color_id = r1.color_id
+          WHERE r2.rgb_r = r1.rgb_r
+            AND r2.rgb_g = r1.rgb_g
+            AND r2.rgb_b = r1.rgb_b
         )
     `, [sessionId]);
     const firstToClassify = firstRows[0].count;
 
-    // Get controversial colors (where user disagrees with majority)
-    const [controversialRows] = await db.query(`
-      SELECT
-        c.id,
-        c.hex,
-        r.user_classification as yourClassification,
-        (
-          SELECT user_classification
-          FROM responses r2
-          WHERE r2.color_id = c.id
-          GROUP BY user_classification
-          ORDER BY COUNT(*) DESC
-          LIMIT 1
-        ) as majorityClassification,
-        (
-          SELECT COUNT(*)
-          FROM responses r3
-          WHERE r3.color_id = c.id
-        ) as totalResponses
-      FROM responses r
-      JOIN colors c ON r.color_id = c.id
-      WHERE r.session_id = ?
-        AND r.user_classification != (
-          SELECT user_classification
-          FROM responses r2
-          WHERE r2.color_id = c.id
-          GROUP BY user_classification
-          ORDER BY COUNT(*) DESC
-          LIMIT 1
-        )
-      ORDER BY totalResponses DESC
-      LIMIT 3
-    `, [sessionId]);
-
-    const controversialColors = controversialRows.map(row => ({
-      id: row.id,
-      hex: row.hex,
-      yourClassification: row.yourClassification,
-      majorityClassification: row.majorityClassification,
-      disagreementCount: row.totalResponses
-    }));
-
     res.json({
       totalClassified,
-      firstToClassify,
-      controversialColors
+      firstToClassify
     });
   } catch (error) {
     console.error('Error fetching personal stats:', error);
@@ -83,10 +42,6 @@ router.get('/personal', async (req, res) => {
 // GET /api/stats/global - Get platform-wide statistics
 router.get('/global', async (req, res) => {
   try {
-    // Total colors
-    const [totalColorsRows] = await db.query('SELECT COUNT(*) as count FROM colors');
-    const totalColors = totalColorsRows[0].count;
-
     // Total classifications
     const [totalClassificationsRows] = await db.query(
       'SELECT COUNT(*) as count FROM responses'
@@ -99,39 +54,43 @@ router.get('/global', async (req, res) => {
     );
     const uniqueUsers = uniqueUsersRows[0].count;
 
-    // Coverage (colors with at least one classification)
-    const [coverageRows] = await db.query(`
-      SELECT COUNT(DISTINCT color_id) as count
+    // Total colors classified (distinct RGB combinations)
+    const [totalColorsRows] = await db.query(`
+      SELECT COUNT(DISTINCT CONCAT(rgb_r, '-', rgb_g, '-', rgb_b)) as count
       FROM responses
     `);
-    const colorsClassified = coverageRows[0].count;
-    const percentageCovered = totalColors > 0
-      ? ((colorsClassified / totalColors) * 100).toFixed(1)
-      : 0;
+    const totalColorsClassified = totalColorsRows[0].count;
 
     // Most classified color
     const [mostClassifiedRows] = await db.query(`
-      SELECT c.id, c.hex, COUNT(*) as count
-      FROM responses r
-      JOIN colors c ON r.color_id = c.id
-      GROUP BY c.id, c.hex
+      SELECT
+        rgb_r,
+        rgb_g,
+        rgb_b,
+        hex,
+        COUNT(*) as count
+      FROM responses
+      GROUP BY rgb_r, rgb_g, rgb_b, hex
       ORDER BY count DESC
       LIMIT 1
     `);
 
     const mostClassifiedColor = mostClassifiedRows.length > 0
       ? {
-          id: mostClassifiedRows[0].id,
+          rgb: {
+            r: mostClassifiedRows[0].rgb_r,
+            g: mostClassifiedRows[0].rgb_g,
+            b: mostClassifiedRows[0].rgb_b
+          },
           hex: mostClassifiedRows[0].hex,
           count: mostClassifiedRows[0].count
         }
       : null;
 
     res.json({
-      totalColors,
       totalClassifications,
       uniqueUsers,
-      percentageCovered: parseFloat(percentageCovered),
+      totalColorsClassified,
       mostClassifiedColor
     });
   } catch (error) {

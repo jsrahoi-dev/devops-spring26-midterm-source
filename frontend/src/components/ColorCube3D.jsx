@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
+import './ColorCube3D.css'
 
 function ColorPoint({ position, color, data, onClick }) {
   return (
@@ -13,7 +14,7 @@ function ColorPoint({ position, color, data, onClick }) {
   )
 }
 
-function ColorCube({ colors, mode }) {
+function ColorCube({ colors }) {
   const [selected, setSelected] = useState(null)
 
   const getColorPoints = () => {
@@ -63,21 +64,19 @@ export default function ColorCube3D() {
   const [data, setData] = useState(null)
   const [mode, setMode] = useState('explore')
   const [loading, setLoading] = useState(true)
+  const [view, setView] = useState('global')
 
   useEffect(() => {
-    fetchData()
-  }, [])
-
-  const fetchData = async () => {
-    try {
-      const { data: vizData } = await axios.get('/api/visualize/data')
-      setData(vizData)
-      setLoading(false)
-    } catch (error) {
-      console.error('Error fetching visualization data:', error)
-      setLoading(false)
-    }
-  }
+    axios.get(`/api/visualize/data?view=${view}`)
+      .then(response => {
+        setData(response.data)
+        setLoading(false)
+      })
+      .catch(error => {
+        console.error('Error fetching visualization data:', error)
+        setLoading(false)
+      })
+  }, [view])  // Re-fetch when view changes
 
   if (loading) {
     return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -132,6 +131,21 @@ export default function ColorCube3D() {
             }}
           >
             Most Agreement
+          </button>
+        </div>
+
+        <div className="cube-view-toggle">
+          <button
+            className={view === 'personal' ? 'active' : ''}
+            onClick={() => setView('personal')}
+          >
+            My Colors
+          </button>
+          <button
+            className={view === 'global' ? 'active' : ''}
+            onClick={() => setView('global')}
+          >
+            All Colors
           </button>
         </div>
       </div>
