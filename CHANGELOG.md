@@ -1,3 +1,10 @@
+# [1.3.0-rc.1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.2.0...v1.3.0-rc.1) (2026-03-08)
+
+
+### Features
+
+* auto-trigger RC deployment when RC tag is created ([791026c](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/791026c0e717a04e9c6761df03521145da8fe8c0))
+
 # [1.2.0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.1.2...v1.2.0) (2026-03-08)
 
 
