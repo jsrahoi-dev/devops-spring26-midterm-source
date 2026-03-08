@@ -38,11 +38,12 @@ export default function LanguageSelection() {
       backgroundColor: '#f5f5f5',
       padding: '20px'
     }}>
-      <h1>Color Perception Study</h1>
-      <p style={{ maxWidth: '600px', textAlign: 'center', marginBottom: '30px' }}>
-        Welcome! This study explores how people perceive and classify colors.
-        You'll see 5 colors and classify each one. First, please tell us your native language.
-      </p>
+      <div style={{ maxWidth: '600px', textAlign: 'center', marginBottom: '40px' }}>
+        <h1 style={{ fontSize: '36px', marginBottom: '20px' }}>Color Perception Study</h1>
+        <p style={{ fontSize: '18px', color: '#666', marginBottom: '30px' }}>
+          Help us understand how people perceive and name colors across different languages and cultures.
+        </p>
+      </div>
 
       <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: '400px' }}>
         <select
