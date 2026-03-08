@@ -34,7 +34,7 @@ export default function LanguageSelection() {
       await axios.post('/api/language', { language: selectedLanguage })
       Cookies.set('user_language', selectedLanguage, {
         expires: 30,
-        secure: true,
+        secure: import.meta.env.PROD,
         sameSite: 'strict',
         path: '/'
       })
