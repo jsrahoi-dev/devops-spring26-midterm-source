@@ -1,5 +1,7 @@
 # Color Perception SPA
 
+[![Integration Tests](https://github.com/jsrahoi-dev/devops-spring26-midterm-infra/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/jsrahoi-dev/devops-spring26-midterm-infra/actions/workflows/integration-tests.yml)
+
 A Single Page Application for studying color perception across users with different native languages.
 
 ## Features
