@@ -1,23 +1,22 @@
 name: Trigger RC Deployment
 
 on:
-  push:
-    tags:
-      - 'v*-rc.*'  # Matches v1.0.0-rc.1, v1.2.0-rc.2, etc.
+  create
 
 jobs:
   trigger-infra-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    # Only run for RC tags
+    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v') && contains(github.ref_name, '-rc')
     
     steps:
       - name: Extract version from tag
         id: version
         run: |
-          VERSION=${GITHUB_REF#refs/tags/}
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          echo "📦 RC tag created: $VERSION"
+          echo "VERSION=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          echo "📦 RC tag created: ${{ github.ref_name }}"
       
       - name: Trigger infra repo deployment
         run: |
