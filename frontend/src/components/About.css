@@ -1,13 +1,25 @@
 .about-page {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 40px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.about-container {
   max-width: 800px;
-  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  padding: 60px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 }
 
 .about-container h1 {
-  font-size: 36px;
-  margin-bottom: 30px;
+  font-size: 2.5rem;
+  margin-bottom: 40px;
   color: #333;
+  text-align: center;
 }
 
 .about-section {
@@ -15,13 +27,17 @@
 }
 
 .about-section h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
+  color: #667eea;
   margin-bottom: 15px;
-  color: #444;
 }
 
 .about-section p {
-  font-size: 16px;
+  font-size: 1.1rem;
   line-height: 1.6;
   color: #666;
+}
+
+.about-section:last-child {
+  margin-bottom: 0;
 }
