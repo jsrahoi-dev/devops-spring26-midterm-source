@@ -83,7 +83,7 @@ export default function StatsView() {
         <div className="stat-item">
           <span className="stat-icon">🌈</span>
           <span className="stat-label">Colors Classified:</span>
-          <span className="stat-value">{formatColorCount(globalStats.totalColors)}</span>
+          <span className="stat-value">{formatColorCount(globalStats.totalColorsClassified)}</span>
         </div>
         {globalStats.mostClassifiedColor && (
           <div className="stat-item">
