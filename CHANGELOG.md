@@ -1,3 +1,10 @@
+## [1.4.1-rc.1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.0...v1.4.1-rc.1) (2026-03-08)
+
+
+### Bug Fixes
+
+* handle missing session in /api/colors/next endpoint ([b8326b6](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/b8326b644caba10b6b142849e7a8547c01c3d358))
+
 # [1.4.0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.3.0...v1.4.0) (2026-03-08)
 
 
