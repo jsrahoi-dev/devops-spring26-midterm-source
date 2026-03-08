@@ -1,3 +1,19 @@
+# [1.2.0](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.1.2...v1.2.0) (2026-03-08)
+
+
+### Bug Fixes
+
+* add flex-grow to #root to fill viewport ([fabc21f](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/fabc21fb5633500e9bcab0e1c763b68687dad7ed))
+* add security flags to language cookie (secure, sameSite, path) ([460d4d5](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/460d4d5eca5b6ed05a480a0b2ee3f2c4beccf44d))
+* ensure body flex-direction allows #root to fill viewport ([5da704e](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/5da704e5e9e5665370701e5e487050f1bdf822fa))
+* make cookie secure flag conditional for local development ([65652e1](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/65652e138cd9813578d799740dfb793e80283bdc))
+
+
+### Features
+
+* add language cookie check with auto-redirect on mount ([f0a96ba](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/f0a96bace7549f110896ac967c44a6c80a2153c6))
+* persist language choice in cookie with 30-day expiry ([7a09905](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/7a099054f83d6e9a051c0833af257305ad80c25b))
+
 ## [1.1.2](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.1.1...v1.1.2) (2026-03-08)
 
 
