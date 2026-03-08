@@ -18,14 +18,9 @@ export default function ColorClassifier() {
       setLoading(true)
       const { data } = await axios.get('/api/colors/next')
 
-      if (data.done) {
-        // All colors classified - still show interface with stats
-        setColor(null)
-        setLoading(false)
-      } else {
-        setColor(data.color)
-        setLoading(false)
-      }
+      // Always expect { rgb_r, rgb_g, rgb_b, hex }
+      setColor(data)
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching color:', error)
       setLoading(false)
@@ -36,8 +31,11 @@ export default function ColorClassifier() {
     if (!color) return
 
     try {
+      // Send RGB values instead of color_id
       const response = await axios.post('/api/responses', {
-        color_id: color.id,
+        rgb_r: color.rgb_r,
+        rgb_g: color.rgb_g,
+        rgb_b: color.rgb_b,
         classification
       })
 
