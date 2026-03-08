@@ -67,8 +67,13 @@ app.get('/api/health', async (req, res) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Handle React routing - send all other requests to index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// This catches all GET requests that haven't been handled by API routes
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  } else {
+    next();
+  }
 });
 
 app.listen(PORT, () => {
