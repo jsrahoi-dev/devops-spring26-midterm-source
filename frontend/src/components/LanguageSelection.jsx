@@ -1,12 +1,20 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 export default function LanguageSelection() {
   const [language, setLanguage] = useState('')
   const [otherLanguage, setOtherLanguage] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const savedLanguage = Cookies.get('user_language')
+    if (savedLanguage) {
+      navigate('/classify')
+    }
+  }, [navigate])
 
   const commonLanguages = [
     'English', 'Spanish', 'Mandarin', 'Hindi', 'Arabic',
