@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
+import Layout from './components/Layout'
 import LanguageSelection from './components/LanguageSelection'
 import ColorClassifier from './components/ColorClassifier'
 import Results from './components/Results'
@@ -8,10 +9,12 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<LanguageSelection />} />
-        <Route path="/classify" element={<ColorClassifier />} />
-        <Route path="/results" element={<Results />} />
-        <Route path="/explore" element={<ColorCube3D />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<LanguageSelection />} />
+          <Route path="/classify" element={<ColorClassifier />} />
+          <Route path="/results" element={<Results />} />
+          <Route path="/explore" element={<ColorCube3D />} />
+        </Route>
       </Routes>
     </div>
   )
