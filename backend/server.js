@@ -26,6 +26,9 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// Trust nginx reverse proxy for secure cookies and session persistence
+app.set('trust proxy', 1);
+
 app.use(session({
   key: 'color_session',
   secret: process.env.SESSION_SECRET,
