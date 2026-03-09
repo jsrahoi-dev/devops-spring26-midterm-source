@@ -200,7 +200,10 @@ export default function ColorCube3D() {
       </div>
 
       <div style={{ flex: 1, minHeight: '600px', backgroundColor: '#1a1a1a' }}>
-        <Canvas camera={{ position: [2, 2, 2], fov: 75 }}>
+        <Canvas
+          camera={{ position: [2, 2, 2], fov: 75 }}
+          style={{ width: '100%', height: '100%' }}
+        >
           {data && <ColorCube colors={data.colors} mode={mode} />}
         </Canvas>
       </div>
