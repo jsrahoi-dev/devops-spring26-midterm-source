@@ -89,15 +89,21 @@
       <li><strong>Infra Repo (<a href="https://github.com/jsrahoi-dev/devops-spring26-midterm-infra">devops-spring26-midterm-infra</a>):</strong> RC build workflow, integration tests, deployment scripts, AWS infrastructure as code</li>
     </ul>
 
-    <h4>Infrastructure Diagram</h4>
+<h4>Infrastructure Diagram</h4>
     <div className="mermaid">
 {`graph TB
+    Users[Users/Browsers]
+
     subgraph "GitHub"
         GHA[GitHub Actions<br/>OIDC Authentication]
         Secrets[GitHub Secrets<br/>DB credentials, AWS config,<br/>Session secrets]
     end
 
     subgraph "AWS Account"
+        subgraph "DNS"
+            R53[Route53<br/>rahoi.dev hosted zone<br/>rc.rahoi.dev<br/>qa.rahoi.dev]
+        end
+
         subgraph "IAM"
             Role[GitHubActionsDeployRole<br/>Trust Policy: GitHub OIDC]
         end
@@ -124,6 +130,9 @@
         end
     end
 
+    Users -->|DNS lookup| R53
+    R53 -->|rc.rahoi.dev| EC2RC
+    R53 -->|qa.rahoi.dev| EC2QA
     GHA -->|AssumeRole via OIDC| Role
     GHA -.->|Uses| Secrets
     Role -->|Deploy Container| EC2RC
@@ -141,6 +150,8 @@
     SG2 -.->|Controls Access| EC2Temp
     SGRDS -.->|Controls Access| RDS
 
+    style Users fill:#90EE90,stroke:#228B22,stroke-width:2px
+    style R53 fill:#FF6B6B,stroke:#8B0000,stroke-width:3px
     style GHA fill:#e2d44a,stroke:#8d7c2d,stroke-width:3px
     style Secrets fill:#f4a460,stroke:#8d5f2d,stroke-width:2px
     style Role fill:#a84ae2,stroke:#5f2d8d,stroke-width:3px
@@ -494,6 +505,11 @@ sequenceDiagram
 <h4>Challenge: Docker Build Context Size</h4>
     <p><strong>Problem:</strong> Docker build was slow because it was copying node_modules to build context.</p>
     <p><strong>Solution:</strong> Added .dockerignore file excluding node_modules, .git, and other unnecessary files. Build time dropped from 5min to 2min.</p>
+
+<h4>Challenge: Testing github actions</h4>
+    <p><strong>Problem:</strong> testing github actions was incredibly finicky and slow.</p>
+    <p><strong>Solution: None. embrace the pain.</strong></p>
+
   </section>
 
   <section>
@@ -511,9 +527,6 @@ sequenceDiagram
       auto-scaling, multi-region deployment, and comprehensive monitoring - this
       architecture could easily handle thousands of concurrent users while maintaining
       99.9% uptime.
-    </p>
-    <p>
-      <strong>Current RC Environment:</strong> <a href="https://rc.rahoi.dev" target="_blank" rel="noopener noreferrer">https://rc.rahoi.dev</a>
     </p>
 
   </section>
