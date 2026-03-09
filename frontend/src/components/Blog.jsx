@@ -10,7 +10,11 @@ export default function Blog() {
       mermaidRef.current = true
       window.mermaid.initialize({
         startOnLoad: false,
-        theme: 'dark'
+        theme: 'neutral',
+        themeVariables: {
+          fontSize: '16px',
+          fontFamily: 'system-ui, -apple-system, sans-serif'
+        }
       })
       window.mermaid.run()
     }
