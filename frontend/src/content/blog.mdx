@@ -2,7 +2,7 @@
 ## Jon Rahoi • March 8, 2026 • DevOps Spring 2026 Midterm Project
 
 <article className="blog-post">
-  ## From Code to Cloud: A semi-Complete DevOps Implementation
+  ## DevOps Implementation - (a good start)
 
   <section>
 <h3>1. System Overview & Architecture</h3>
@@ -13,6 +13,14 @@
 
     <p>
       The data gathered will be used to generate language-specific color identification models and will be used to study how people with different native languages classify colors.
+    </p>
+
+    <p>
+      <strong>QA environment:</strong> <a href="https://qa.rahoi.dev/" target="_blank" rel="noopener noreferrer"> https://qa.rahoi.dev/</a>
+    </p>
+
+    <p>
+      <strong>RC environment:</strong> <a href="https://rc.rahoi.dev/" target="_blank" rel="noopener noreferrer"> https://rc.rahoi.dev/</a>
     </p>
 
 <h4>Technology Stack</h4>
@@ -31,12 +39,12 @@
     User[User Browser]
     CF[CloudFront CDN<br/>Future Enhancement]
     ALB[Application Load Balancer<br/>Future Enhancement]
-    RC[RC EC2 Instance<br/>t3.micro - 3.92.207.70]
+    RC[RC EC2 Instance<br/>t3.micro - rc.rahoi.dev]
     Prod[Production EC2<br/>Future Enhancement]
     RDS[(RDS MySQL 8.0<br/>db.t3.micro)]
     ECR[Amazon ECR<br/>color-perception-spa]
 
-    User -->|HTTPS :3000| RC
+    User -->|HTTPS| RC
     User -.->|Future| CF
     CF -.->|Future| ALB
     ALB -.->|Future| Prod
@@ -60,14 +68,14 @@
 
     <h4>AWS Resources</h4>
     <ul>
-      <li><strong>EC2 Instance (RC Environment):</strong> t3.micro instance running Docker, serves the containerized application on port 3000</li>
+      <li><strong>EC2 Instance (RC Environment):</strong> t3.micro instance running Docker, serves the containerized application via Nginx reverse proxy (internal port 3000)</li>
       <li><strong>RDS MySQL Database:</strong> db.t3.micro instance with automated backups, publicly accessible for development</li>
       <li><strong>ECR Container Registry:</strong> Stores versioned Docker images with RC tags (e.g., v1.2.0-rc.1)</li>
       <li><strong>IAM Role (GitHubActionsDeployRole):</strong> OIDC-authenticated role for GitHub Actions with EC2, ECR, and Systems Manager permissions</li>
       <li>
         <strong>Security Groups:</strong>
         <ul>
-          <li>RC Instance: Allows inbound HTTP (3000), SSH (22)</li>
+          <li>RC Instance: Allows inbound HTTP/HTTPS (80/443), SSH (22)</li>
           <li>RDS: Allows MySQL (3306) from RC instance and temporary integration test instances</li>
           <li>Temp EC2: Created dynamically for integration tests, cleaned up after</li>
         </ul>
@@ -76,8 +84,9 @@
 
     <h4>GitHub Repositories</h4>
     <ul>
-      <li><strong>Source Repo (devops-spring26-midterm-source):</strong> Application code, semantic-release automation, triggers RC builds</li>
-      <li><strong>Infra Repo (devops-spring26-midterm-infra):</strong> RC build workflow, integration tests, deployment scripts, AWS infrastructure as code</li>
+
+      <li><strong>Source Repo (<a href="https://github.com/jsrahoi-dev/devops-spring26-midterm-source">devops-spring26-midterm-source</a>):</strong> Application code, semantic-release automation, triggers RC builds</li>
+      <li><strong>Infra Repo (<a href="https://github.com/jsrahoi-dev/devops-spring26-midterm-infra">devops-spring26-midterm-infra</a>):</strong> RC build workflow, integration tests, deployment scripts, AWS infrastructure as code</li>
     </ul>
 
     <h4>Infrastructure Diagram</h4>
@@ -106,7 +115,7 @@
         end
 
         subgraph "Networking"
-            SG1[RC Security Group<br/>Port 3000, 22]
+            SG1[RC Security Group<br/>Port 80/443, 22]
             SG2[Temp Security Group<br/>Ephemeral]
             SGRDS[RDS Security Group<br/>Port 3306]
         end
@@ -340,7 +349,7 @@
       <li>
         <strong>RC Instance Security Group:</strong>
         <ul>
-          <li>Inbound: HTTP (3000) from anywhere, SSH (22) from my IP</li>
+          <li>Inbound: HTTP/HTTPS (80/443) from anywhere, SSH (22) from my IP</li>
           <li>Outbound: All traffic (for ECR pulls, RDS connections)</li>
         </ul>
       </li>
@@ -462,132 +471,6 @@
   </section>
 
   <section>
-<h3>8. What I Would Do Next (Production)</h3>
-
-    <p>
-      The current RC environment is production-ready in terms of code quality and testing,
-      but lacks the scalability, reliability, and security features needed for a real
-      production deployment. Here's my roadmap:
-    </p>
-
-<h4>Production Environment Setup</h4>
-    <ul>
-      <li>Separate production EC2 instance(s) with different security groups</li>
-      <li>Private subnets for EC2 and RDS (no public IPs)</li>
-      <li>NAT Gateway for outbound internet access from private subnets</li>
-      <li>Bastion host or Systems Manager Session Manager for secure SSH access</li>
-      <li>Separate RDS instance for production with Multi-AZ deployment</li>
-    </ul>
-
-<h4>Blue-Green Deployment</h4>
-    <ul>
-      <li>Two production environments (blue and green)</li>
-      <li>Deploy to inactive environment, test, then switch traffic</li>
-      <li>Instant rollback by switching back to previous environment</li>
-      <li>Zero-downtime deployments</li>
-      <li>Implemented via Application Load Balancer target group switching</li>
-    </ul>
-
-<h4>Auto-Scaling with Application Load Balancer</h4>
-    <ul>
-      <li>Application Load Balancer (ALB) to distribute traffic across multiple EC2 instances</li>
-      <li>Auto Scaling Group with min 2, max 10 instances based on CPU/memory metrics</li>
-      <li>Health checks at /api/health with automatic instance replacement</li>
-      <li>Sticky sessions to maintain user sessions during scale operations</li>
-      <li>SSL/TLS termination at ALB with ACM certificate</li>
-    </ul>
-
-<h4>CloudFront CDN</h4>
-    <ul>
-      <li>Global content delivery network for frontend assets</li>
-      <li>Cache static assets (JS, CSS, images) at edge locations</li>
-      <li>Reduce latency for international users</li>
-      <li>DDoS protection via AWS Shield Standard (included with CloudFront)</li>
-      <li>Custom domain with HTTPS (e.g., colorperception.rahoi.dev)</li>
-    </ul>
-
-<h4>Route53 DNS</h4>
-    <ul>
-      <li>Custom domain management</li>
-      <li>Health checks with failover to backup region</li>
-      <li>Weighted routing for gradual rollouts (10% of traffic to new version)</li>
-      <li>Geolocation routing for region-specific deployments</li>
-    </ul>
-
-<h4>CloudWatch Monitoring & Alarms</h4>
-    <ul>
-      <li>Application metrics: Request count, latency, error rates</li>
-      <li>Infrastructure metrics: CPU, memory, disk usage, network throughput</li>
-      <li>Database metrics: Connection count, query latency, replication lag</li>
-      <li>Custom metrics: Color classifications per minute, session creation rate</li>
-      <li>
-        Alarms with SNS notifications (email/SMS) for:
-        <ul>
-          <li>Error rate &gt; 5%</li>
-          <li>Latency P95 &gt; 1000ms</li>
-          <li>Database CPU &gt; 80%</li>
-          <li>Disk usage &gt; 85%</li>
-        </ul>
-      </li>
-      <li>CloudWatch Logs for centralized log aggregation</li>
-      <li>Log insights queries for debugging and analytics</li>
-    </ul>
-
-<h4>Cost Optimization</h4>
-    <ul>
-      <li>Reserved Instances for baseline capacity (40-60% savings vs on-demand)</li>
-      <li>Spot Instances for auto-scaling overflow (up to 90% savings)</li>
-      <li>RDS reserved instances for 1-year term</li>
-      <li>S3 lifecycle policies for old container images (move to Glacier after 90 days)</li>
-      <li>CloudWatch Logs retention policies (30 days for debug logs, 1 year for audit logs)</li>
-      <li>Compression for CloudFront assets (gzip/brotli)</li>
-      <li>Database query optimization (reduce RDS instance size)</li>
-    </ul>
-
-<h4>Disaster Recovery</h4>
-    <ul>
-      <li>RDS automated backups with 30-day retention</li>
-      <li>Manual snapshots before major deployments</li>
-      <li>Point-in-time recovery within backup window</li>
-      <li>Database replication to standby region (cross-region read replica)</li>
-      <li>Backup restoration testing (monthly drill)</li>
-      <li>Infrastructure as Code (Terraform/CloudFormation) for rapid environment recreation</li>
-      <li>Disaster recovery runbook with RTO (2 hours) and RPO (15 minutes) targets</li>
-    </ul>
-
-<h4>Multi-Region Deployment</h4>
-    <ul>
-      <li>Primary region: us-east-1 (Virginia)</li>
-      <li>Backup region: us-west-2 (Oregon)</li>
-      <li>Route53 health checks with automatic failover</li>
-      <li>Database replication for eventual consistency</li>
-      <li>Regional CloudFront distributions</li>
-      <li>Active-passive configuration initially, move to active-active for true HA</li>
-    </ul>
-
-<h4>Security Enhancements</h4>
-    <ul>
-      <li>AWS WAF (Web Application Firewall) on ALB/CloudFront for SQL injection, XSS protection</li>
-      <li>AWS Secrets Manager for database credentials (automatic rotation)</li>
-      <li>KMS encryption for RDS at rest and ECR images</li>
-      <li>VPC Flow Logs for network monitoring</li>
-      <li>GuardDuty for threat detection</li>
-      <li>Security Hub for compliance monitoring</li>
-      <li>Regular vulnerability scanning with AWS Inspector</li>
-    </ul>
-
-<h4>Advanced CI/CD</h4>
-    <ul>
-      <li>Canary deployments: Deploy to 10% of instances, monitor metrics, roll out gradually</li>
-      <li>Automated rollback on alarm triggers (error rate spike)</li>
-      <li>Performance testing in staging (load tests with artillery.io or k6)</li>
-      <li>Database migration testing with schema comparison</li>
-      <li>Approval gate for production deployments (require manual approval from team lead)</li>
-      <li>Deployment notifications to Slack/Discord</li>
-    </ul>
-  </section>
-
-  <section>
 <h3>Conclusion</h3>
     <p>
       This project demonstrates a complete DevOps implementation from local development
@@ -604,7 +487,8 @@
       99.9% uptime.
     </p>
     <p>
-      <strong>Current RC Environment:</strong> <a href="http://3.92.207.70:3000" target="_blank" rel="noopener noreferrer">http://3.92.207.70:3000</a>
+      <strong>Current RC Environment:</strong> <a href="https://rc.rahoi.dev" target="_blank" rel="noopener noreferrer">https://rc.rahoi.dev</a>
     </p>
+
   </section>
 </article>
