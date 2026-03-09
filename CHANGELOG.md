@@ -1,3 +1,10 @@
+## [1.4.6](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.5...v1.4.6) (2026-03-09)
+
+
+### Bug Fixes
+
+* **stats:** handle missing session ID in personal stats endpoint ([e52b4a2](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/e52b4a26819a0d68acb8efcba8ba4144a02a02ba))
+
 ## [1.4.5](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.4...v1.4.5) (2026-03-09)
 
 
