@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
@@ -87,10 +86,7 @@ export default function ColorCube3D() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: '20px', backgroundColor: 'white', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <h1 style={{ margin: 0 }}>3D Color Space</h1>
-          <Link to="/results">← Back to Results</Link>
-        </div>
+        <h1 style={{ margin: 0 }}>3D Color Space</h1>
 
         <div style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
           <button

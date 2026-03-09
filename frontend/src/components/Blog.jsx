@@ -1,29 +1,18 @@
 import './Blog.css'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function Blog() {
+  const mermaidRef = useRef(false)
+
   useEffect(() => {
-    // Initialize Mermaid diagrams
-    if (window.mermaid) {
+    // Initialize and render Mermaid diagrams
+    if (window.mermaid && !mermaidRef.current) {
+      mermaidRef.current = true
       window.mermaid.initialize({
-        startOnLoad: true,
-        theme: 'dark',
-        themeVariables: {
-          primaryColor: '#4a90e2',
-          primaryTextColor: '#fff',
-          primaryBorderColor: '#7c9cbf',
-          lineColor: '#7c9cbf',
-          secondaryColor: '#2d5f8d',
-          tertiaryColor: '#1a3a52',
-          background: '#1a1a2e',
-          mainBkg: '#1a1a2e',
-          textColor: '#e0e0e0',
-          nodeBorder: '#4a90e2',
-          clusterBkg: '#2d3748',
-          clusterBorder: '#4a90e2'
-        }
+        startOnLoad: false,
+        theme: 'dark'
       })
-      window.mermaid.contentLoaded()
+      window.mermaid.run()
     }
   }, [])
 
@@ -57,7 +46,7 @@ export default function Blog() {
             </ul>
 
             <h4>High-Level Architecture</h4>
-            <pre className="mermaid-diagram">
+            <div className="mermaid">
 {`graph TB
     User[User Browser]
     CF[CloudFront CDN<br/>Future Enhancement]
@@ -83,7 +72,7 @@ export default function Blog() {
     style CF fill:#666,stroke:#444,stroke-width:1px,stroke-dasharray: 5 5
     style ALB fill:#666,stroke:#444,stroke-width:1px,stroke-dasharray: 5 5
     style Prod fill:#666,stroke:#444,stroke-width:1px,stroke-dasharray: 5 5`}
-            </pre>
+            </div>
           </section>
 
           <section>
@@ -111,7 +100,7 @@ export default function Blog() {
             </ul>
 
             <h4>Infrastructure Diagram</h4>
-            <pre className="mermaid-diagram">
+            <div className="mermaid">
 {`graph TB
     subgraph "GitHub Actions"
         GHA[GitHub Actions<br/>OIDC Authentication]
@@ -160,7 +149,7 @@ export default function Blog() {
     style ECR fill:#4ae2a8,stroke:#2d8d5f,stroke-width:3px
     style RDS fill:#e24a4a,stroke:#8d2d2d,stroke-width:3px
     style EC2Temp fill:#e2a84a,stroke:#8d5f2d,stroke-width:2px`}
-            </pre>
+            </div>
           </section>
 
           <section>
@@ -197,7 +186,7 @@ export default function Blog() {
             </ul>
 
             <h4>Quality Gates: Three-Tier Testing Strategy</h4>
-            <pre className="mermaid-diagram">
+            <div className="mermaid">
 {`graph LR
     subgraph "Tier 1: Pre-Build Quality"
         Lint[ESLint<br/>Frontend & Backend]
@@ -234,10 +223,10 @@ export default function Blog() {
     style RCDeploy fill:#e24a4a,stroke:#8d2d2d,stroke-width:3px
     style TempEC2 fill:#e2a84a,stroke:#8d5f2d,stroke-width:2px
     style Cleanup fill:#a84ae2,stroke:#5f2d8d,stroke-width:2px`}
-            </pre>
+            </div>
 
             <h4>CI/CD Flow Diagram</h4>
-            <pre className="mermaid-diagram">
+            <div className="mermaid">
 {`sequenceDiagram
     participant Dev as Developer
     participant Source as Source Repo<br/>GitHub Actions
@@ -269,7 +258,7 @@ export default function Blog() {
     RC-->>Infra: Deployment Successful ✓
 
     Note over Dev,RC: Full Pipeline: ~8-12 minutes`}
-            </pre>
+            </div>
           </section>
 
           <section>

@@ -104,7 +104,7 @@
 }
 
 /* Mermaid diagram styling */
-.mermaid-diagram {
+.mermaid {
   background: #1a1a2e;
   border-radius: 8px;
   padding: 20px;
@@ -113,7 +113,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.mermaid-diagram svg {
+.mermaid svg {
   max-width: 100%;
   height: auto;
   display: block;
@@ -142,7 +142,7 @@
     font-size: 1.1rem;
   }
 
-  .mermaid-diagram {
+  .mermaid {
     padding: 15px;
     margin: 20px -10px;
   }
