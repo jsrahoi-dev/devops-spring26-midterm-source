@@ -236,7 +236,9 @@ sequenceDiagram
     participant ECR as AWS ECR
     participant TempEC2 as Temp EC2
     participant RC as RC Environment
+    participant QA as QA Environment
 
+    Note over Dev,QA: RC Deployment Flow (Tag-Triggered)
     Dev->>Source: git push (conventional commit)
     Source->>Source: Semantic Release Analysis
     Source->>Source: Generate Changelog
@@ -259,10 +261,23 @@ sequenceDiagram
     Infra->>RC: Health Check Verification
     RC-->>Infra: Deployment Successful ✓
 
-    Note over Dev,RC: Full Pipeline: ~8-12 minutes`}
-    </div>
-  </section>
+    Note over Dev,QA: QA Nightly Build Flow (Scheduled)
+    Note over Infra: Cron: Daily at midnight UTC
+    Infra->>Source: Checkout main branch (latest)
+    Infra->>Infra: ESLint (Tier 1)
+    Infra->>Infra: Docker Multi-Stage Build
+    Infra->>Infra: Smoke Tests (Tier 2)
+    Infra->>ECR: Push Image (latest)
+    Infra->>QA: Pull Image from ECR
+    Infra->>QA: Stop Old Container
+    Infra->>QA: Start New Container
+    Infra->>QA: Health Check Verification
+    QA-->>Infra: Deployment Successful ✓
 
+    Note over Dev,QA: RC: ~8-12 min | QA: ~5-7 min`}
+    </div>
+
+  </section>
   <section>
 <h3>4. What I Built in GitHub</h3>
 
