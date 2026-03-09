@@ -13,11 +13,27 @@ function ColorPoint({ position, color, data, onClick }) {
   )
 }
 
-function ColorCube({ colors }) {
+function ColorCube({ colors, mode }) {
   const [selected, setSelected] = useState(null)
 
   const getColorPoints = () => {
-    return colors.map(c => ({
+    // Filter/sort colors based on mode
+    let filteredColors = [...colors]
+
+    if (mode === 'controversial') {
+      // Sort by controversy (highest first) and take top 50
+      filteredColors = filteredColors
+        .sort((a, b) => b.controversy - a.controversy)
+        .slice(0, 50)
+    } else if (mode === 'agreement') {
+      // Sort by agreement (highest first) and take top 50
+      filteredColors = filteredColors
+        .sort((a, b) => b.agreement - a.agreement)
+        .slice(0, 50)
+    }
+    // mode === 'explore' shows all colors
+
+    return filteredColors.map(c => ({
       position: [c.rgb.r / 255 * 2 - 1, c.rgb.g / 255 * 2 - 1, c.rgb.b / 255 * 2 - 1],
       color: c.hex,
       data: c
@@ -63,9 +79,12 @@ export default function ColorCube3D() {
   const [data, setData] = useState(null)
   const [mode, setMode] = useState('explore')
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [view, setView] = useState('global')
 
   useEffect(() => {
+    setLoading(true)
+    setError(null)
     axios.get(`/api/visualize/data?view=${view}`)
       .then(response => {
         setData(response.data)
@@ -73,6 +92,7 @@ export default function ColorCube3D() {
       })
       .catch(error => {
         console.error('Error fetching visualization data:', error)
+        setError(error.response?.data?.error || 'Failed to load visualization data')
         setLoading(false)
       })
   }, [view])  // Re-fetch when view changes
@@ -80,6 +100,21 @@ export default function ColorCube3D() {
   if (loading) {
     return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       Loading 3D visualization...
+    </div>
+  }
+
+  if (error) {
+    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '20px', textAlign: 'center' }}>
+      <h2>Error loading visualization</h2>
+      <p>{error}</p>
+    </div>
+  }
+
+  if (!data || !data.colors || data.colors.length === 0) {
+    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', padding: '20px', textAlign: 'center' }}>
+      <h2>No data available yet</h2>
+      <p>Colors will appear here once classifications have been submitted.</p>
+      <p>Try classifying some colors first!</p>
     </div>
   }
 
@@ -146,7 +181,7 @@ export default function ColorCube3D() {
         </div>
       </div>
 
-      <div style={{ flex: 1, backgroundColor: '#1a1a1a' }}>
+      <div style={{ flex: 1, minHeight: '600px', backgroundColor: '#1a1a1a' }}>
         <Canvas camera={{ position: [2, 2, 2], fov: 75 }}>
           {data && <ColorCube colors={data.colors} mode={mode} />}
         </Canvas>
