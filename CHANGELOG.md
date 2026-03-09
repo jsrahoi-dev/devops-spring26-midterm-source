@@ -1,3 +1,10 @@
+## [1.4.8](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.7...v1.4.8) (2026-03-09)
+
+
+### Bug Fixes
+
+* make Three.js canvas fill container area ([ede2962](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/ede29623641562ce75e3efcb38c39cd8e2394239))
+
 ## [1.4.7](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.6...v1.4.7) (2026-03-09)
 
 
