@@ -4,13 +4,14 @@ const path = require('path');
 const db = require('./db/connection');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
+const { initDatabase } = require('./db/init');
 
 const sessionStore = new MySQLStore({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  createDatabaseTable: false, // We created it manually
+  createDatabaseTable: true, // Auto-create sessions table if it doesn't exist
   schema: {
     tableName: 'sessions',
     columnNames: {
@@ -82,6 +83,12 @@ app.use((req, res, next) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Initialize database tables on startup
+initDatabase().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
 });
