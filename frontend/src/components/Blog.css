@@ -147,3 +147,58 @@
     margin: 20px -10px;
   }
 }
+
+/* Print styles for diagrams */
+@media print {
+  .blog-page {
+    background: white;
+    padding: 0;
+  }
+
+  .blog-container {
+    box-shadow: none;
+    padding: 20px;
+  }
+
+  /* Make Mermaid diagrams print-friendly */
+  .mermaid {
+    background: white !important;
+    border: 2px solid #ddd;
+    page-break-inside: avoid;
+  }
+
+  /* Override white text for printing - force dark text */
+  .mermaid text,
+  .mermaid .nodeLabel,
+  .mermaid .edgeLabel,
+  .mermaid .labelText,
+  .mermaid .messageText,
+  .mermaid .noteText,
+  .mermaid .actor,
+  .mermaid tspan {
+    fill: #000 !important;
+    stroke: none !important;
+  }
+
+  /* Ensure diagram elements are visible */
+  .mermaid rect,
+  .mermaid path,
+  .mermaid circle,
+  .mermaid polygon {
+    stroke: #333 !important;
+  }
+
+  /* Make boxes have light backgrounds for readability */
+  .mermaid .node rect,
+  .mermaid .cluster rect {
+    fill: #f5f5f5 !important;
+  }
+
+  /* Ensure lines are visible */
+  .mermaid .messageLine0,
+  .mermaid .messageLine1,
+  .mermaid line,
+  .mermaid path.path {
+    stroke: #333 !important;
+  }
+}
