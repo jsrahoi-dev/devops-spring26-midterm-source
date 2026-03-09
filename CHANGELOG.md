@@ -1,3 +1,10 @@
+## [1.4.7](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.6...v1.4.7) (2026-03-09)
+
+
+### Bug Fixes
+
+* improve blog diagram contrast and color cube visualization ([#8](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/issues/8)) ([5ac4c7a](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/5ac4c7a002243b7b3d2acc74154ec21fb39841af))
+
 ## [1.4.6](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.5...v1.4.6) (2026-03-09)
 
 
