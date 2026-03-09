@@ -1,3 +1,12 @@
+## [1.4.10](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.9...v1.4.10) (2026-03-09)
+
+
+### Bug Fixes
+
+* add print styles for Mermaid diagrams ([944fa5d](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/944fa5d171f162c65a241455ce4fefd166e45222))
+* improve text contrast in CI/CD sequence diagram ([c626695](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/c626695745da852856cd836b3598f47fb138d0e8))
+* remove duplicate closing div tag in infrastructure diagram ([d106adc](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/d106adcdc86a2f5e454fe309e3237e6d2e8094c4))
+
 ## [1.4.9](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.8...v1.4.9) (2026-03-09)
 
 
