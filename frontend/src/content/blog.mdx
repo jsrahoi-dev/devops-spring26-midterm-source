@@ -1,0 +1,603 @@
+# A Production-Ready Color Perception SPA
+## Jon Rahoi • March 8, 2026 • DevOps Spring 2026 Midterm Project
+
+<article className="blog-post">
+  ## From Code to Cloud: A semi-Complete DevOps Implementation
+
+  <section>
+    ### 1. System Overview & Architecture
+    <p>
+      The Color Perception SPA is a research application designed to study how people
+      with different native languages classify colors. Users are presented with randomly- generated colors from the RGB color space (16.7 million possible colors), and are asked classify them into one of 11 "parent colors", and can explore agreement patterns in an interactive 3D visualization.
+    </p>
+
+    <p>
+      The data gathered will be used to generate language-specific color identification models and will be used to study how people with different native languages classify colors.
+    </p>
+
+    #### Technology Stack
+    <ul>
+      <li><strong>Frontend:</strong> React 18 w/ Vite for fast builds, React Three Fiber for 3D color space visualization, Axios for API communication</li>
+      <li><strong>Backend:</strong> Node.js 20 with Express, MySQL session store for persistent user sessions</li>
+      <li><strong>Database:</strong> MySQL 8 on AWS RDS with InnoDB storage engine</li>
+      <li><strong>Containerization:</strong> Docker with multi-stage builds (frontend build stage + production backend stage)</li>
+      <li><strong>Cloud Infrastructure:</strong> AWS EC2 (t3.micro) for compute, RDS for database, ECR for container registry</li>
+      <li><strong>CI/CD:</strong> GitHub Actions with semantic-release for automated versioning</li>
+    </ul>
+
+    #### High-Level Architecture
+    <div className="mermaid">
+{`graph TB
+    User[User Browser]
+    CF[CloudFront CDN<br/>Future Enhancement]
+    ALB[Application Load Balancer<br/>Future Enhancement]
+    RC[RC EC2 Instance<br/>t3.micro - 3.92.207.70]
+    Prod[Production EC2<br/>Future Enhancement]
+    RDS[(RDS MySQL 8.0<br/>db.t3.micro)]
+    ECR[Amazon ECR<br/>color-perception-spa]
+
+    User -->|HTTPS :3000| RC
+    User -.->|Future| CF
+    CF -.->|Future| ALB
+    ALB -.->|Future| Prod
+    RC -->|TCP 3306| RDS
+    Prod -.->|Future| RDS
+    RC -->|Pull Images| ECR
+    Prod -.->|Future| ECR
+
+    style RC fill:#4a90e2,stroke:#2d5f8d,stroke-width:3px
+    style RDS fill:#e24a4a,stroke:#8d2d2d,stroke-width:3px
+    style ECR fill:#4ae2a8,stroke:#2d8d5f,stroke-width:3px
+    style User fill:#e2d44a,stroke:#8d7c2d,stroke-width:2px
+    style CF fill:#666,stroke:#444,stroke-width:1px,stroke-dasharray: 5 5
+    style ALB fill:#666,stroke:#444,stroke-width:1px,stroke-dasharray: 5 5
+    style Prod fill:#666,stroke:#444,stroke-width:1px,stroke-dasharray: 5 5`}
+    </div>
+  </section>
+
+  <section>
+    ### 2. Infrastructure Components
+
+    #### AWS Resources
+    <ul>
+      <li><strong>EC2 Instance (RC Environment):</strong> t3.micro instance running Docker, serves the containerized application on port 3000</li>
+      <li><strong>RDS MySQL Database:</strong> db.t3.micro instance with automated backups, publicly accessible for development</li>
+      <li><strong>ECR Container Registry:</strong> Stores versioned Docker images with RC tags (e.g., v1.2.0-rc.1)</li>
+      <li><strong>IAM Role (GitHubActionsDeployRole):</strong> OIDC-authenticated role for GitHub Actions with EC2, ECR, and Systems Manager permissions</li>
+      <li><strong>Security Groups:</strong>
+        <ul>
+          <li>RC Instance: Allows inbound HTTP (3000), SSH (22)</li>
+          <li>RDS: Allows MySQL (3306) from RC instance and temporary integration test instances</li>
+          <li>Temp EC2: Created dynamically for integration tests, cleaned up after</li>
+        </ul>
+      </li>
+    </ul>
+
+    #### GitHub Repositories
+    <ul>
+      <li><strong>Source Repo (devops-spring26-midterm-source):</strong> Application code, semantic-release automation, triggers RC builds</li>
+      <li><strong>Infra Repo (devops-spring26-midterm-infra):</strong> RC build workflow, integration tests, deployment scripts, AWS infrastructure as code</li>
+    </ul>
+
+    #### Infrastructure Diagram
+    <div className="mermaid">
+{`graph TB
+    subgraph "GitHub Actions"
+        GHA[GitHub Actions<br/>OIDC Authentication]
+    end
+
+    subgraph "AWS Account"
+        subgraph "IAM"
+            Role[GitHubActionsDeployRole<br/>Trust Policy: GitHub OIDC]
+        end
+
+        subgraph "Compute"
+            EC2RC[RC EC2 Instance<br/>t3.micro - Ubuntu<br/>Docker + Nginx]
+            EC2Temp[Temp EC2<br/>Integration Tests<br/>Auto-cleanup]
+        end
+
+        subgraph "Container Registry"
+            ECR[Amazon ECR<br/>color-perception-spa<br/>Immutable Tags]
+        end
+
+        subgraph "Database"
+            RDS[(RDS MySQL 8.0<br/>db.t3.micro<br/>20GB Storage)]
+        end
+
+        subgraph "Networking"
+            SG1[RC Security Group<br/>Port 3000, 22]
+            SG2[Temp Security Group<br/>Ephemeral]
+            SGRDS[RDS Security Group<br/>Port 3306]
+        end
+    end
+
+    GHA -->|AssumeRole via OIDC| Role
+    Role -->|Deploy Container| EC2RC
+    Role -->|Provision & Cleanup| EC2Temp
+    Role -->|Push/Pull Images| ECR
+    EC2RC -->|docker pull| ECR
+    EC2Temp -->|docker pull| ECR
+    EC2RC -->|MySQL Connection| RDS
+    EC2Temp -->|Integration Tests| RDS
+    SG1 -.->|Controls Access| EC2RC
+    SG2 -.->|Controls Access| EC2Temp
+    SGRDS -.->|Controls Access| RDS
+
+    style GHA fill:#e2d44a,stroke:#8d7c2d,stroke-width:3px
+    style Role fill:#a84ae2,stroke:#5f2d8d,stroke-width:3px
+    style EC2RC fill:#4a90e2,stroke:#2d5f8d,stroke-width:3px
+    style ECR fill:#4ae2a8,stroke:#2d8d5f,stroke-width:3px
+    style RDS fill:#e24a4a,stroke:#8d2d2d,stroke-width:3px
+    style EC2Temp fill:#e2a84a,stroke:#8d5f2d,stroke-width:2px`}
+    </div>
+  </section>
+
+  <section>
+    ### 3. CI/CD Pipeline
+
+    <p>
+      The CI/CD pipeline is split across two repositories with a sophisticated
+      repository dispatch pattern that separates code versioning from infrastructure deployment.
+    </p>
+
+    #### Source Repository Workflows
+    <ul>
+      <li><strong>Semantic Release:</strong> Analyzes conventional commits, generates changelog, creates version tags (e.g., v1.2.0-rc.1)</li>
+      <li><strong>Trigger RC Deploy:</strong> Listens for RC tag creation, sends repository dispatch event to infra repo with version payload</li>
+    </ul>
+
+    #### Infrastructure Repository Workflows
+    <ul>
+      <li><strong>RC Build & Test:</strong>
+        <ul>
+          <li>Tier 1: ESLint checks for frontend and backend</li>
+          <li>Tier 1: Jest unit tests for backend API logic</li>
+          <li>Docker multi-stage build</li>
+          <li>Tier 2: Smoke tests (health check, API endpoints, frontend render)</li>
+          <li>Push to ECR with version tag</li>
+          <li>Tier 3: Provision temporary EC2 instance</li>
+          <li>Tier 3: Deploy full stack to temp instance</li>
+          <li>Tier 3: Run integration tests (session persistence, color generation, database writes)</li>
+          <li>Tier 3: Cleanup temporary resources</li>
+          <li>Deploy to RC environment</li>
+          <li>Verify deployment health</li>
+        </ul>
+      </li>
+    </ul>
+
+    #### Quality Gates: Three-Tier Testing Strategy
+    <div className="mermaid">
+{`graph LR
+    subgraph "Tier 1: Pre-Build Quality"
+        Lint[ESLint<br/>Frontend & Backend]
+        Unit[Jest Unit Tests<br/>API Routes]
+    end
+
+    subgraph "Tier 2: Container Smoke Tests"
+        Health[Health Check<br/>/api/health]
+        API[API Endpoints<br/>Functional Tests]
+        Frontend[Frontend Build<br/>Render Verification]
+    end
+
+    subgraph "Tier 3: Integration Tests"
+        TempEC2[Provision Temp EC2<br/>Fresh Environment]
+        Deploy[Deploy Full Stack<br/>Container + RDS]
+        E2E[End-to-End Tests<br/>Session & Data Flow]
+        Cleanup[Cleanup Resources<br/>Terminate Instance]
+    end
+
+    Lint --> Build[Docker Build<br/>Multi-Stage]
+    Unit --> Build
+    Build --> Health
+    Health --> API
+    API --> Frontend
+    Frontend --> Push[Push to ECR<br/>Version Tag]
+    Push --> TempEC2
+    TempEC2 --> Deploy
+    Deploy --> E2E
+    E2E --> Cleanup
+    Cleanup --> RCDeploy[Deploy to RC<br/>Production-like Env]
+
+    style Build fill:#4a90e2,stroke:#2d5f8d,stroke-width:3px
+    style Push fill:#4ae2a8,stroke:#2d8d5f,stroke-width:3px
+    style RCDeploy fill:#e24a4a,stroke:#8d2d2d,stroke-width:3px
+    style TempEC2 fill:#e2a84a,stroke:#8d5f2d,stroke-width:2px
+    style Cleanup fill:#a84ae2,stroke:#5f2d8d,stroke-width:2px`}
+    </div>
+
+    #### CI/CD Flow Diagram
+    <div className="mermaid">
+{`sequenceDiagram
+    participant Dev as Developer
+    participant Source as Source Repo<br/>GitHub Actions
+    participant Infra as Infra Repo<br/>GitHub Actions
+    participant ECR as AWS ECR
+    participant TempEC2 as Temp EC2
+    participant RC as RC Environment
+
+    Dev->>Source: git push (conventional commit)
+    Source->>Source: Semantic Release Analysis
+    Source->>Source: Generate Changelog
+    Source->>Source: Create RC Tag (v1.2.0-rc.1)
+    Source->>Infra: Repository Dispatch Event
+    Note over Infra: Triggered by RC tag
+    Infra->>Source: Checkout RC Tag
+    Infra->>Infra: ESLint + Jest Tests (Tier 1)
+    Infra->>Infra: Docker Multi-Stage Build
+    Infra->>Infra: Smoke Tests (Tier 2)
+    Infra->>ECR: Push Image (v1.2.0-rc.1)
+    Infra->>TempEC2: Provision Fresh Instance
+    Infra->>TempEC2: Deploy Container + Configure RDS
+    Infra->>TempEC2: Run Integration Tests (Tier 3)
+    TempEC2-->>Infra: Tests Pass ✓
+    Infra->>TempEC2: Terminate & Cleanup
+    Infra->>RC: Pull Image from ECR
+    Infra->>RC: Stop Old Container
+    Infra->>RC: Start New Container
+    Infra->>RC: Health Check Verification
+    RC-->>Infra: Deployment Successful ✓
+
+    Note over Dev,RC: Full Pipeline: ~8-12 minutes`}
+    </div>
+  </section>
+
+  <section>
+    ### 4. What I Built in GitHub
+
+    #### Repository Structure
+    <p>
+      I created a dual-repository architecture to separate concerns between application
+      code and infrastructure deployment:
+    </p>
+    <ul>
+      <li><strong>Source Repo:</strong> Contains React frontend, Express backend, Dockerfile, semantic-release configuration</li>
+      <li><strong>Infra Repo:</strong> Contains deployment scripts, integration tests, AWS resource configurations, GitHub Actions workflows</li>
+    </ul>
+
+    #### GitHub Actions Workflows Created
+    <ul>
+      <li><strong>release.yml (Source):</strong> Runs semantic-release on every push to main, creates version tags with conventional commit analysis</li>
+      <li><strong>trigger-rc-deploy.yml (Source):</strong> Listens for RC tag creation, triggers infra repo via repository dispatch</li>
+      <li><strong>rc-build.yml (Infra):</strong> Comprehensive build, test, and deploy workflow with three-tier testing</li>
+      <li><strong>integration-tests.yml (Infra):</strong> Standalone integration test suite for manual validation</li>
+    </ul>
+
+    #### OIDC Setup for AWS
+    <p>
+      Instead of using static AWS credentials, I implemented OpenID Connect (OIDC) authentication:
+    </p>
+    <ul>
+      <li>Created an IAM OIDC identity provider for GitHub</li>
+      <li>Created GitHubActionsDeployRole with trust policy allowing GitHub Actions to assume the role</li>
+      <li>Configured workflows to use aws-actions/configure-aws-credentials with OIDC role assumption</li>
+      <li>Benefits: No long-lived credentials, automatic rotation, fine-grained permissions</li>
+    </ul>
+
+    #### Secrets Management
+    <ul>
+      <li><strong>INFRA_REPO_TOKEN:</strong> Personal access token for repository dispatch and cross-repo communication</li>
+      <li><strong>AWS_ACCOUNT_ID:</strong> Used in ECR image URIs</li>
+      <li><strong>DB_HOST, DB_USER, DB_PASSWORD, DB_NAME:</strong> RDS connection details</li>
+      <li><strong>SESSION_SECRET:</strong> Express session signing key</li>
+    </ul>
+
+    #### Branch Protection Rules
+    <ul>
+      <li>Main branch protected with required status checks</li>
+      <li>All changes must go through pull requests</li>
+      <li>Conventional commits enforced for semantic versioning</li>
+    </ul>
+  </section>
+
+  <section>
+    ### 5. What I Built in AWS
+
+    #### EC2 Instance (RC Environment)
+    <ul>
+      <li><strong>Instance Type:</strong> t3.micro (2 vCPU, 1GB RAM) - cost-effective for RC workloads</li>
+      <li><strong>AMI:</strong> Ubuntu 24.04 LTS with Docker pre-installed</li>
+      <li><strong>Configuration:</strong> Nginx reverse proxy forwarding to Docker container on port 3000</li>
+      <li><strong>Persistent Storage:</strong> 8GB EBS volume for container images and logs</li>
+      <li><strong>Tags:</strong> Environment=RC, Project=ColorPerception, ManagedBy=GitHub-Actions</li>
+    </ul>
+
+    #### RDS MySQL Database
+    <ul>
+      <li><strong>Engine:</strong> MySQL 8.0.35</li>
+      <li><strong>Instance Class:</strong> db.t3.micro (2 vCPU, 1GB RAM)</li>
+      <li><strong>Storage:</strong> 20GB GP2 SSD with auto-scaling up to 100GB</li>
+      <li><strong>Backup:</strong> Automated daily backups with 7-day retention</li>
+      <li><strong>Schema:</strong> Three tables (colors, sessions, responses) with foreign key constraints</li>
+      <li><strong>Network:</strong> Publicly accessible for development (would be private in production)</li>
+    </ul>
+
+    #### ECR Container Registry
+    <ul>
+      <li><strong>Repository Name:</strong> color-perception-spa</li>
+      <li><strong>Image Scanning:</strong> Enabled on push for vulnerability detection</li>
+      <li><strong>Tag Immutability:</strong> Enabled to prevent tag overwrites</li>
+      <li><strong>Lifecycle Policy:</strong> Keep last 10 RC images, delete untagged images after 7 days</li>
+    </ul>
+
+    #### IAM Roles and Policies
+    <ul>
+      <li><strong>GitHubActionsDeployRole:</strong> Allows GitHub Actions to:
+        <ul>
+          <li>Push/pull images from ECR</li>
+          <li>Start/stop/terminate EC2 instances</li>
+          <li>Send commands via Systems Manager</li>
+          <li>Create/delete temporary instances for integration tests</li>
+        </ul>
+      </li>
+      <li><strong>Trust Policy:</strong> Restricts role assumption to specific GitHub repos and branches</li>
+    </ul>
+
+    #### Security Groups and Networking
+    <ul>
+      <li><strong>RC Instance Security Group:</strong>
+        <ul>
+          <li>Inbound: HTTP (3000) from anywhere, SSH (22) from my IP</li>
+          <li>Outbound: All traffic (for ECR pulls, RDS connections)</li>
+        </ul>
+      </li>
+      <li><strong>RDS Security Group:</strong>
+        <ul>
+          <li>Inbound: MySQL (3306) from RC instance and temp instance security groups</li>
+          <li>Also allows public access for development debugging</li>
+        </ul>
+      </li>
+      <li><strong>Temp Instance Security Group:</strong>
+        <ul>
+          <li>Created dynamically during integration tests</li>
+          <li>Allows outbound to RDS and ECR</li>
+          <li>Deleted after test completion</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    ### 6. Key Implementation Details
+
+    #### Database Migrations
+    <p>
+      I implemented a safe migration strategy using SQL schema files:
+    </p>
+    <ul>
+      <li>CREATE TABLE IF NOT EXISTS prevents errors on redeployment</li>
+      <li>Foreign key constraints ensure referential integrity</li>
+      <li>Indexes on rgb_r, rgb_g, rgb_b for fast color lookups</li>
+      <li>InnoDB engine for ACID compliance and row-level locking</li>
+      <li>Migration runs automatically on container startup</li>
+    </ul>
+
+    #### Session Management
+    <p>
+      Session persistence was critical for tracking user responses across multiple colors:
+    </p>
+    <ul>
+      <li>Used express-mysql-session to store sessions in RDS instead of memory</li>
+      <li>Set app.set('trust proxy', 1) to handle Nginx reverse proxy headers</li>
+      <li>Configured secure cookies for production (httpOnly, secure flags)</li>
+      <li>7-day session expiration to allow users to return</li>
+      <li>Session ID used as foreign key in responses table</li>
+    </ul>
+
+    #### Random RGB Color Generation
+    <p>
+      Unlike traditional systems with predefined color palettes, this app generates
+      colors from the entire RGB color space:
+    </p>
+    <ul>
+      <li>Math.random() * 256 for each channel (R, G, B)</li>
+      <li>16,777,216 possible unique colors</li>
+      <li>Algorithm attempts to avoid showing duplicate colors to the same user</li>
+      <li>Falls back to whatever color was generated after 3 attempts (prevents infinite loops)</li>
+      <li>Converts RGB to hex for CSS display (#RRGGBB format)</li>
+    </ul>
+
+    #### Three-Tier Testing Strategy
+    <ul>
+      <li><strong>Tier 1 (Pre-Build):</strong> Fast feedback on code quality before building containers</li>
+      <li><strong>Tier 2 (Smoke Tests):</strong> Validates container works in isolation</li>
+      <li><strong>Tier 3 (Integration):</strong> Tests full system with real AWS resources, catches configuration issues</li>
+    </ul>
+
+    #### Temporary EC2 Integration Testing
+    <p>
+      To ensure deployments work in a production-like environment without affecting RC:
+    </p>
+    <ul>
+      <li>Provision fresh t3.micro instance with same AMI as RC</li>
+      <li>Deploy container and configure RDS connection</li>
+      <li>Run integration tests (session creation, color storage, API workflows)</li>
+      <li>Always cleanup: terminate instance even if tests fail (uses always() in workflow)</li>
+      <li>Cost-effective: instance runs for ~5 minutes per build</li>
+    </ul>
+
+    #### Docker Multi-Stage Build
+    <p>
+      Optimized for production with a two-stage build:
+    </p>
+    <ul>
+      <li><strong>Stage 1:</strong> node:20 full image, builds React with Vite (npm run build)</li>
+      <li><strong>Stage 2:</strong> node:20-slim, copies built frontend + backend, removes dev dependencies</li>
+      <li>Final image size: ~200MB vs. ~1GB with single-stage build</li>
+      <li>Faster pulls from ECR, lower storage costs</li>
+    </ul>
+  </section>
+
+  <section>
+    ### 7. Challenges & Solutions
+
+    #### Challenge: Session Persistence Behind Nginx
+    <p><strong>Problem:</strong> Sessions weren't persisting between requests. Users would lose their language selection and color history.</p>
+    <p><strong>Solution:</strong> Added app.set('trust proxy', 1) to trust Nginx's X-Forwarded-For headers. This fixed session cookie issues.</p>
+
+    #### Challenge: YAML Syntax in GitHub Actions
+    <p><strong>Problem:</strong> Workflows failed with cryptic YAML parsing errors, especially with multiline strings in deployment scripts.</p>
+    <p><strong>Solution:</strong> Used | for literal block scalars and proper indentation. Validated YAML with online linters before committing.</p>
+
+    #### Challenge: Semantic-Release Token Permissions
+    <p><strong>Problem:</strong> Semantic-release couldn't create tags with GITHUB_TOKEN - kept getting 403 errors.</p>
+    <p><strong>Solution:</strong> Created a Personal Access Token (INFRA_REPO_TOKEN) with repo and workflow scopes. Used persist-credentials: false in checkout.</p>
+
+    #### Challenge: Database Migration Safety
+    <p><strong>Problem:</strong> Needed migrations to run on every deployment but not fail if tables already existed.</p>
+    <p><strong>Solution:</strong> Used CREATE TABLE IF NOT EXISTS and idempotent migration scripts. Tested migration re-runs in integration tests.</p>
+
+    #### Challenge: Integration Test Cleanup
+    <p><strong>Problem:</strong> Failed integration tests left orphaned EC2 instances running, costing money.</p>
+    <p><strong>Solution:</strong> Wrapped cleanup in always() condition in GitHub Actions. Also added tags to instances for manual cleanup scripts.</p>
+
+    #### Challenge: Docker Build Context Size
+    <p><strong>Problem:</strong> Docker build was slow because it was copying node_modules to build context.</p>
+    <p><strong>Solution:</strong> Added .dockerignore file excluding node_modules, .git, and other unnecessary files. Build time dropped from 5min to 2min.</p>
+  </section>
+
+  <section>
+    ### 8. What I Would Do Next (Production)
+
+    <p>
+      The current RC environment is production-ready in terms of code quality and testing,
+      but lacks the scalability, reliability, and security features needed for a real
+      production deployment. Here's my roadmap:
+    </p>
+
+    #### Production Environment Setup
+    <ul>
+      <li>Separate production EC2 instance(s) with different security groups</li>
+      <li>Private subnets for EC2 and RDS (no public IPs)</li>
+      <li>NAT Gateway for outbound internet access from private subnets</li>
+      <li>Bastion host or Systems Manager Session Manager for secure SSH access</li>
+      <li>Separate RDS instance for production with Multi-AZ deployment</li>
+    </ul>
+
+    #### Blue-Green Deployment
+    <ul>
+      <li>Two production environments (blue and green)</li>
+      <li>Deploy to inactive environment, test, then switch traffic</li>
+      <li>Instant rollback by switching back to previous environment</li>
+      <li>Zero-downtime deployments</li>
+      <li>Implemented via Application Load Balancer target group switching</li>
+    </ul>
+
+    #### Auto-Scaling with Application Load Balancer
+    <ul>
+      <li>Application Load Balancer (ALB) to distribute traffic across multiple EC2 instances</li>
+      <li>Auto Scaling Group with min 2, max 10 instances based on CPU/memory metrics</li>
+      <li>Health checks at /api/health with automatic instance replacement</li>
+      <li>Sticky sessions to maintain user sessions during scale operations</li>
+      <li>SSL/TLS termination at ALB with ACM certificate</li>
+    </ul>
+
+    #### CloudFront CDN
+    <ul>
+      <li>Global content delivery network for frontend assets</li>
+      <li>Cache static assets (JS, CSS, images) at edge locations</li>
+      <li>Reduce latency for international users</li>
+      <li>DDoS protection via AWS Shield Standard (included with CloudFront)</li>
+      <li>Custom domain with HTTPS (e.g., colorperception.rahoi.dev)</li>
+    </ul>
+
+    #### Route53 DNS
+    <ul>
+      <li>Custom domain management</li>
+      <li>Health checks with failover to backup region</li>
+      <li>Weighted routing for gradual rollouts (10% of traffic to new version)</li>
+      <li>Geolocation routing for region-specific deployments</li>
+    </ul>
+
+    #### CloudWatch Monitoring & Alarms
+    <ul>
+      <li>Application metrics: Request count, latency, error rates</li>
+      <li>Infrastructure metrics: CPU, memory, disk usage, network throughput</li>
+      <li>Database metrics: Connection count, query latency, replication lag</li>
+      <li>Custom metrics: Color classifications per minute, session creation rate</li>
+      <li>Alarms with SNS notifications (email/SMS) for:
+        <ul>
+          <li>Error rate &gt; 5%</li>
+          <li>Latency P95 &gt; 1000ms</li>
+          <li>Database CPU &gt; 80%</li>
+          <li>Disk usage &gt; 85%</li>
+        </ul>
+      </li>
+      <li>CloudWatch Logs for centralized log aggregation</li>
+      <li>Log insights queries for debugging and analytics</li>
+    </ul>
+
+    #### Cost Optimization
+    <ul>
+      <li>Reserved Instances for baseline capacity (40-60% savings vs on-demand)</li>
+      <li>Spot Instances for auto-scaling overflow (up to 90% savings)</li>
+      <li>RDS reserved instances for 1-year term</li>
+      <li>S3 lifecycle policies for old container images (move to Glacier after 90 days)</li>
+      <li>CloudWatch Logs retention policies (30 days for debug logs, 1 year for audit logs)</li>
+      <li>Compression for CloudFront assets (gzip/brotli)</li>
+      <li>Database query optimization (reduce RDS instance size)</li>
+    </ul>
+
+    #### Disaster Recovery
+    <ul>
+      <li>RDS automated backups with 30-day retention</li>
+      <li>Manual snapshots before major deployments</li>
+      <li>Point-in-time recovery within backup window</li>
+      <li>Database replication to standby region (cross-region read replica)</li>
+      <li>Backup restoration testing (monthly drill)</li>
+      <li>Infrastructure as Code (Terraform/CloudFormation) for rapid environment recreation</li>
+      <li>Disaster recovery runbook with RTO (2 hours) and RPO (15 minutes) targets</li>
+    </ul>
+
+    #### Multi-Region Deployment
+    <ul>
+      <li>Primary region: us-east-1 (Virginia)</li>
+      <li>Backup region: us-west-2 (Oregon)</li>
+      <li>Route53 health checks with automatic failover</li>
+      <li>Database replication for eventual consistency</li>
+      <li>Regional CloudFront distributions</li>
+      <li>Active-passive configuration initially, move to active-active for true HA</li>
+    </ul>
+
+    #### Security Enhancements
+    <ul>
+      <li>AWS WAF (Web Application Firewall) on ALB/CloudFront for SQL injection, XSS protection</li>
+      <li>AWS Secrets Manager for database credentials (automatic rotation)</li>
+      <li>KMS encryption for RDS at rest and ECR images</li>
+      <li>VPC Flow Logs for network monitoring</li>
+      <li>GuardDuty for threat detection</li>
+      <li>Security Hub for compliance monitoring</li>
+      <li>Regular vulnerability scanning with AWS Inspector</li>
+    </ul>
+
+    #### Advanced CI/CD
+    <ul>
+      <li>Canary deployments: Deploy to 10% of instances, monitor metrics, roll out gradually</li>
+      <li>Automated rollback on alarm triggers (error rate spike)</li>
+      <li>Performance testing in staging (load tests with artillery.io or k6)</li>
+      <li>Database migration testing with schema comparison</li>
+      <li>Approval gate for production deployments (require manual approval from team lead)</li>
+      <li>Deployment notifications to Slack/Discord</li>
+    </ul>
+  </section>
+
+  <section>
+    ### Conclusion
+    <p>
+      This project demonstrates a complete DevOps implementation from local development
+      to cloud deployment. The three-tier testing strategy ensures high code quality,
+      while the dual-repository architecture separates concerns between application code
+      and infrastructure. OIDC authentication eliminates the security risks of static
+      credentials, and semantic-release automates versioning based on conventional commits.
+    </p>
+    <p>
+      The current RC environment is fully functional and serves as a solid foundation
+      for a production rollout. With the enhancements outlined above - particularly
+      auto-scaling, multi-region deployment, and comprehensive monitoring - this
+      architecture could easily handle thousands of concurrent users while maintaining
+      99.9% uptime.
+    </p>
+    <p>
+      <strong>Current RC Environment:</strong> <a href="http://3.92.207.70:3000" target="_blank" rel="noopener noreferrer">http://3.92.207.70:3000</a>
+    </p>
+  </section>
+</article>
