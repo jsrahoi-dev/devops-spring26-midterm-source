@@ -237,6 +237,52 @@
     style Cleanup fill:#a84ae2,stroke:#5f2d8d,stroke-width:2px`}
     </div>
 
+<h4>Alerting & Monitoring Strategy</h4>
+    <p>
+      The project implements a context-aware alerting strategy that adapts notification methods 
+      based on how the workflow was triggered:
+    </p>
+
+    <ul>
+      <li><strong>RC Builds (Developer-Triggered):</strong> Creates GitHub workflow summary with detailed stage outcomes. 
+      Assumption: Developer is actively watching the build and can see failures immediately in the Actions tab.</li>
+      <li><strong>Nightly Builds (Scheduled):</strong> Automatically creates GitHub issues on failure with full diagnostic 
+      information including failed stage, run number, and timestamp. Smart deduplication prevents issue spam - if an 
+      issue already exists for today's build, adds a comment instead of creating a duplicate. Assumption: Nobody is 
+      actively watching, so issues act as alerts.</li>
+    </ul>
+
+<h4>Alerting Flow</h4>
+    <div className="mermaid">
+{`%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#333', 'primaryTextColor':'#fff', 'primaryBorderColor':'#777', 'lineColor':'#ccc', 'secondaryColor':'#444', 'tertiaryColor':'#555', 'actorTextColor':'#fff', 'labelTextColor':'#fff', 'labelBoxBkgColor':'#333', 'labelBoxBorderColor':'#777', 'noteTextColor':'#fff', 'noteBkgColor':'#444', 'noteBorderColor':'#777', 'sequenceNumberColor':'#fff'}}}%%
+flowchart TD
+    RCBuild[RC Build Triggered<br/>Tag/Manual]
+    NightlyBuild[Nightly Build Triggered<br/>Cron Schedule]
+    
+    RCBuild --> RCTest{Build<br/>Success?}
+    NightlyBuild --> NightlyTest{Build<br/>Success?}
+    
+    RCTest -->|Success| RCDeploy[Deploy to RC]
+    RCTest -->|Failure| RCSummary[Create Workflow Summary<br/>Show failed stages]
+    
+    NightlyTest -->|Success| QADeploy[Deploy to QA]
+    NightlyTest -->|Failure| CheckIssue{Issue exists<br/>for today?}
+    
+    CheckIssue -->|Yes| AddComment[Add comment to<br/>existing issue]
+    CheckIssue -->|No| CreateIssue[Create new GitHub issue<br/>Title: Build Failed - Stage<br/>Labels: build-failure, automated]
+    
+    RCDeploy --> RCDone[Developer notified<br/>via Actions UI]
+    RCSummary --> RCDone
+    QADeploy --> Done[Silent success]
+    AddComment --> Done
+    CreateIssue --> Done
+    
+    style RCBuild fill:#4a90e2,stroke:#2d5f8d,stroke-width:3px
+    style NightlyBuild fill:#4ac2e2,stroke:#2d7c8d,stroke-width:3px
+    style CreateIssue fill:#e24a4a,stroke:#8d2d2d,stroke-width:3px
+    style AddComment fill:#e2a84a,stroke:#8d5f2d,stroke-width:3px
+    style RCSummary fill:#a84ae2,stroke:#5f2d8d,stroke-width:3px`}
+    </div>
 <h4>CI/CD Flow Diagram</h4>
     <div className="mermaid">
 {`%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#333', 'primaryTextColor':'#fff', 'primaryBorderColor':'#777', 'lineColor':'#ccc', 'secondaryColor':'#444', 'tertiaryColor':'#555', 'actorTextColor':'#fff', 'labelTextColor':'#fff', 'labelBoxBkgColor':'#333', 'labelBoxBorderColor':'#777', 'noteTextColor':'#fff', 'noteBkgColor':'#444', 'noteBorderColor':'#777', 'sequenceNumberColor':'#fff'}}}%%
