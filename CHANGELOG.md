@@ -1,3 +1,11 @@
+## [1.4.4](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.3...v1.4.4) (2026-03-09)
+
+
+### Bug Fixes
+
+* **3d-cube:** make color cube visualization functional ([e7c0f3a](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/e7c0f3adb6e56582451b4a7623d301cfb65c0fbf))
+* **blog:** convert Mermaid diagrams to render properly and remove broken results link ([2652d4c](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/2652d4cde3882265a3a6bb43e0374fdc24fffa26))
+
 ## [1.4.3](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.2...v1.4.3) (2026-03-09)
 
 
