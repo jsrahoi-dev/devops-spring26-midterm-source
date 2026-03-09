@@ -1,3 +1,10 @@
+## [1.4.5](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.4...v1.4.5) (2026-03-09)
+
+
+### Bug Fixes
+
+* **3d-cube:** resolve ESLint error for setState in useEffect ([472bd88](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/472bd889dbb0e5782696d05646593d23e9b4bb98))
+
 ## [1.4.4](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.3...v1.4.4) (2026-03-09)
 
 
