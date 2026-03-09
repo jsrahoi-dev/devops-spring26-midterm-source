@@ -83,18 +83,30 @@ export default function ColorCube3D() {
   const [view, setView] = useState('global')
 
   useEffect(() => {
-    setLoading(true)
-    setError(null)
-    axios.get(`/api/visualize/data?view=${view}`)
-      .then(response => {
-        setData(response.data)
-        setLoading(false)
-      })
-      .catch(error => {
-        console.error('Error fetching visualization data:', error)
-        setError(error.response?.data?.error || 'Failed to load visualization data')
-        setLoading(false)
-      })
+    let cancelled = false
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`/api/visualize/data?view=${view}`)
+        if (!cancelled) {
+          setData(response.data)
+          setLoading(false)
+          setError(null)
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error('Error fetching visualization data:', err)
+          setError(err.response?.data?.error || 'Failed to load visualization data')
+          setLoading(false)
+        }
+      }
+    }
+
+    fetchData()
+
+    return () => {
+      cancelled = true
+    }
   }, [view])  // Re-fetch when view changes
 
   if (loading) {
@@ -168,13 +180,19 @@ export default function ColorCube3D() {
         <div className="cube-view-toggle">
           <button
             className={view === 'personal' ? 'active' : ''}
-            onClick={() => setView('personal')}
+            onClick={() => {
+              setView('personal')
+              setLoading(true)
+            }}
           >
             My Colors
           </button>
           <button
             className={view === 'global' ? 'active' : ''}
-            onClick={() => setView('global')}
+            onClick={() => {
+              setView('global')
+              setLoading(true)
+            }}
           >
             All Colors
           </button>
