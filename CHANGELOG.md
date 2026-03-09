@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.2...v1.4.3) (2026-03-09)
+
+
+### Bug Fixes
+
+* add database initialization to create tables on startup ([e9ac706](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/e9ac706940120b80e4011f55ca78456c74d4552a))
+
 ## [1.4.2](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.1...v1.4.2) (2026-03-08)
 
 
