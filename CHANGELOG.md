@@ -1,3 +1,10 @@
+## [1.4.9](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.8...v1.4.9) (2026-03-09)
+
+
+### Bug Fixes
+
+* correct MDX syntax issues in blog content ([09e195d](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/commit/09e195d4b33099a5b270e3d073669aa07dbaf000))
+
 ## [1.4.8](https://github.com/jsrahoi-dev/devops-spring26-midterm-source/compare/v1.4.7...v1.4.8) (2026-03-09)
 
 
