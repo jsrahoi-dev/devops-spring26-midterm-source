@@ -56,10 +56,17 @@ router.get('/data', async (req, res) => {
       const mostCommon = responses[0];
 
       // Calculate controversy (entropy-like measure)
-      const proportions = responses.map(r => r.count / totalResponses);
-      const controversy = -proportions.reduce((sum, p) => sum + (p * Math.log2(p)), 0);
-      const normalizedControversy = Math.min(controversy / Math.log2(responses.length), 1);
-      const agreement = 1 - normalizedControversy;
+      let normalizedControversy, agreement;
+      if (responses.length === 1) {
+        // Only one classification type - perfect agreement, no controversy
+        normalizedControversy = 0;
+        agreement = 1;
+      } else {
+        const proportions = responses.map(r => r.count / totalResponses);
+        const controversy = -proportions.reduce((sum, p) => sum + (p * Math.log2(p)), 0);
+        normalizedControversy = Math.min(controversy / Math.log2(responses.length), 1);
+        agreement = 1 - normalizedControversy;
+      }
 
       visualizationData.push({
         rgb: { r: color.rgb_r, g: color.rgb_g, b: color.rgb_b },

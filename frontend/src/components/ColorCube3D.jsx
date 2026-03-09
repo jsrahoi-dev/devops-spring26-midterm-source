@@ -7,8 +7,8 @@ import './ColorCube3D.css'
 function ColorPoint({ position, color, data, onClick }) {
   return (
     <mesh position={position} onClick={() => onClick(data)}>
-      <sphereGeometry args={[0.05, 16, 16]} />
-      <meshStandardMaterial color={color} />
+      <sphereGeometry args={[0.08, 20, 20]} />
+      <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.3} />
     </mesh>
   )
 }
