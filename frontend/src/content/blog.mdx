@@ -92,8 +92,9 @@
     <h4>Infrastructure Diagram</h4>
     <div className="mermaid">
 {`graph TB
-    subgraph "GitHub Actions"
+    subgraph "GitHub"
         GHA[GitHub Actions<br/>OIDC Authentication]
+        Secrets[GitHub Secrets<br/>DB credentials, AWS config,<br/>Session secrets]
     end
 
     subgraph "AWS Account"
@@ -103,6 +104,7 @@
 
         subgraph "Compute"
             EC2RC[RC EC2 Instance<br/>t3.micro - Ubuntu<br/>Docker + Nginx]
+            EC2QA[QA EC2 Instance<br/>t3.micro - Ubuntu<br/>Docker + Nginx<br/>Nightly Deployments]
             EC2Temp[Temp EC2<br/>Integration Tests<br/>Auto-cleanup]
         end
 
@@ -116,29 +118,38 @@
 
         subgraph "Networking"
             SG1[RC Security Group<br/>Port 80/443, 22]
+            SGQA[QA Security Group<br/>Port 80/443, 22]
             SG2[Temp Security Group<br/>Ephemeral]
             SGRDS[RDS Security Group<br/>Port 3306]
         end
     end
 
     GHA -->|AssumeRole via OIDC| Role
+    GHA -.->|Uses| Secrets
     Role -->|Deploy Container| EC2RC
+    Role -->|Deploy Container| EC2QA
     Role -->|Provision & Cleanup| EC2Temp
     Role -->|Push/Pull Images| ECR
     EC2RC -->|docker pull| ECR
+    EC2QA -->|docker pull| ECR
     EC2Temp -->|docker pull| ECR
     EC2RC -->|MySQL Connection| RDS
+    EC2QA -->|MySQL Connection| RDS
     EC2Temp -->|Integration Tests| RDS
     SG1 -.->|Controls Access| EC2RC
+    SGQA -.->|Controls Access| EC2QA
     SG2 -.->|Controls Access| EC2Temp
     SGRDS -.->|Controls Access| RDS
 
     style GHA fill:#e2d44a,stroke:#8d7c2d,stroke-width:3px
+    style Secrets fill:#f4a460,stroke:#8d5f2d,stroke-width:2px
     style Role fill:#a84ae2,stroke:#5f2d8d,stroke-width:3px
     style EC2RC fill:#4a90e2,stroke:#2d5f8d,stroke-width:3px
+    style EC2QA fill:#4ac2e2,stroke:#2d7c8d,stroke-width:3px
     style ECR fill:#4ae2a8,stroke:#2d8d5f,stroke-width:3px
     style RDS fill:#e24a4a,stroke:#8d2d2d,stroke-width:3px
     style EC2Temp fill:#e2a84a,stroke:#8d5f2d,stroke-width:2px`}
+    </div>
     </div>
   </section>
 
