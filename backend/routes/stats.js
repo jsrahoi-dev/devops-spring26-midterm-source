@@ -5,7 +5,16 @@ const db = require('../db/connection');
 // GET /api/stats/personal - Get user's personal statistics
 router.get('/personal', async (req, res) => {
   try {
-    const sessionId = req.session.id;
+    // Get session ID - handle both express-session formats
+    const sessionId = req.session.id || req.sessionID;
+
+    if (!sessionId) {
+      // No session yet - return zeros
+      return res.json({
+        totalClassified: 0,
+        firstToClassify: 0
+      });
+    }
 
     // Count total classifications
     const [totalRows] = await db.query(
